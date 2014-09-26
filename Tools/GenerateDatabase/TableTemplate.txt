@@ -1,0 +1,24 @@
+<?php
+   /**
+    * Class with the specific methods and properties to access to the table data
+    * 
+    * In this class the logical structure table is defined.
+    */
+    
+   include_once dirname(__FILE__).'/Core/TableDef.php';
+   include_once dirname(__FILE__).'/Core/ColumnDef.php';
+   include_once dirname(__FILE__).'/Core/ColumnType.php';
+   include_once 'GenericTable.php';
+
+   include_once 'LoggerMgr/LoggerMgr.php';
+
+   class $theClassName extends GenericTable {
+
+     private $loggerM;
+
+     /*
+      * Contant Table Name
+      */
+     const $theClassNameTableC = "$theClassName";
+
+ 

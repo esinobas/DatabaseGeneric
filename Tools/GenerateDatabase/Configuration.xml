@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tables>
+<table_definition>
+   <name>Configuration</name>
+   <column>
+      <name>Property</name>
+      <type>string</type>
+   </column>
+   <column>
+      <name>Value</name>
+      <type>string</type>
+   </column>
+   <key>
+      <column>Property</column>
+   </key>
+</table_definition>
+</tables>
