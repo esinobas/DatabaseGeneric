@@ -34,6 +34,13 @@
        */
       protected $tableDefinitionM = NULL;
       
+      /**
+       * Property where the mapping between phisical and logical table
+       * is saved
+       * @var TableMapping
+       */
+      protected $tableMappingM = NULL;
+      
       /**************** Methods **************/
       /**
        * Constructor of the class. It is protected to avoid it is instanced 

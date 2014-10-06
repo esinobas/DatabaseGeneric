@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tables>
+<Database>
 <table_definition>
    <name>Configuration</name>
    <column>
@@ -13,5 +13,24 @@
    <key>
       <column>Property</column>
    </key>
+   <!--  Phisical Mapping -->
+   <phisical_tables>
+      <table>
+         <name>TB_CONFIGURATION</name>
+         <columns>
+            <column>
+               <name>Property</name>
+               <logical>Property</logical>
+            </column>
+            <column>
+               <name>Value</name>
+               <logical>Value</logical>
+            </column>
+         </columns>
+      </table>
+   </phisical_tables>
 </table_definition>
-</tables>
+
+!-- Mapping definitions --!
+
+</Database>

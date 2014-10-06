@@ -63,7 +63,8 @@
       }
    }
    
-   function writeConstructor($theFileHandler, $theClassName, $theColumns, $theKey){
+   function writeConstructor($theFileHandler, $theClassName, $theColumns, $theKey,
+                             $thePhisicalDef){
       global $logger;
       
       $logger->trace("Enter");
@@ -73,16 +74,40 @@
       $text .= "\tpublic function __constructor(){\n";
       $text .= "      \$this->loggerM = LoggerMgr::Instance()->getLogger(__CLASS__);\n";
       $text .= "       \n";
-      $text .= "\t\t\$this->tableDefinitionM = new TableDef(self::".$theClassName."TableC);\n";
+      $text .= "\t\t\$this->tableDefinitionM = new TableDef(\$this->".$theClassName."TableC);\n";
       for ($idx= 0; $idx <count($theColumns); $idx++){
          $text .="\t\t\$this->tableDefinitionM.addColumn(new ColumnDef(
-                              self::".$theColumns[$idx]->name."ColumnC,"
+                              \$this->".$theColumns[$idx]->name."ColumnC,"
                                .getColumnType($theColumns[$idx]->type)."));\n";
       }
       for ($idx= 0; $idx <count($theKey); $idx++){
-         $text .="\t\t\$this->tableDefinitionM.addKey(self::"
+         $text .="\t\t\$this->tableDefinitionM.addKey(\$this->"
                                     .$theColumns[$idx]->name."ColumnC);\n";
       }
+      
+      /*** Write the phisical mapping ***/
+      $text .= "   \n";
+      $text .= "      \$this->tableMappingM = new TableMapping();\n";
+      $tables = $thePhisicalDef->table;
+      for( $idx = 0; $idx < count($tables); $idx++){
+         $text .= "      \n";
+         $logger->debug("Add phisical table [ " . $tables[$idx]->name . " ]");
+         $text .= "      \$this->tableMappingM->addTable(\$this->phisical".$tables[$idx]->name.
+                      "C);\n";
+         $columns = $tables[$idx]->columns->column;
+         
+         for ($idxColumns = 0; $idxColumns < count($columns); $idxColumns++){
+            $logger->debug("Add mapping between phisical column: [ ".
+                  $tables[$idx]->name.".".$columns[$idxColumns]->name ." ] and [ ".
+                  $columns[$idxColumns]->logical ." ]");
+            $text .= "      \$this->tableMappingM->addColumn(\n            \$this->phisical".
+                  $tables[$idx]->name."C ,\n            \$this->phisical".
+                  $columns[$idxColumns]->name."ColumnC ,\n            \$this->".
+                  $columns[$idxColumns]->logical ."ColumnC);\n";
+            
+         }   
+      }
+      $text .= "      \n";
       $text .= "\t}\n";
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
@@ -95,7 +120,7 @@
       for ($idx= 0; $idx <count($theColumns); $idx++){
          $text.= "      public function get".$theColumns[$idx]->name."(){\n";
          $text.= "         \$logger->trace(\"Enter\");\n";
-         $text.= "         return \$this->get(self::".
+         $text.= "         return \$this->get(\$this->".
                          $theColumns[$idx]->name."ColumnC);\n";
          $text.= "         \$logger->trace(\"Exit\");\n";
          $text.= "      }\n";
@@ -103,11 +128,38 @@
          $text.= "      public function set".$theColumns[$idx]->name."($".
                           $theColumns[$idx]->name."){\n";
          $text.= "         \$logger->trace(\"Enter\");\n";
-         $text.= "         \$this->set(self::".
+         $text.= "         \$this->set(\$this->".
                $theColumns[$idx]->name."ColumnC, \$".
                               $theColumns[$idx]->name.");\n";
          $text.= "         \$logger->trace(\"Exit\");\n";
          $text.= "      }\n";
+      }
+      fwrite($theFileHandler, $text);
+      $logger->trace("Exit");
+   }
+   
+   function writePhisicalConstants($theFileHandler, $thePhisicalDef){
+      
+      global $logger;
+      $logger->trace("Enter");
+      $text = "      \n";
+      $text .= "      /*** Phisical constants ***/\n\n";
+      $tables = $thePhisicalDef->table;
+      $logger->debug("Number of phisical tables: [ ".count($tables) ." ]");
+      for( $idx = 0; $idx < count($tables); $idx++){
+         $text .= "   \n";
+         $logger->trace("Phisical table name: ".$tables[$idx]->name);
+         $text .= "      const phisical".$tables[$idx]->name."C = \"".$tables[$idx]->name."\";\n";
+         $columns = $tables[$idx]->columns->column;
+         $logger->debug("The phisical table ".$tables[$idx]->name.
+                         " has ". count($columns)." columns");
+         for ($idxColumns = 0; $idxColumns < count($columns); $idxColumns++){
+            $logger->debug("Phisical column name: ".$columns[$idxColumns]->name);
+         
+            $text .= "      const phisical".$columns[$idxColumns]->name."ColumnC = \"".
+                      $columns[$idxColumns]->name."\";\n";
+         }
+         $text .= "\n";
       }
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
@@ -136,10 +188,13 @@
                        $definitions->table_definition[$idx]->name);
       writeColumnsConstanDefinition($fileHandler,
                        $definitions->table_definition[$idx]->column);
+      writePhisicalConstants($fileHandler,
+                       $definitions->table_definition[$idx]->phisical_tables);
       writeConstructor($fileHandler, 
                        $definitions->table_definition[$idx]->name,
                        $definitions->table_definition[$idx]->column,
-                       $definitions->table_definition[$idx]->key);
+                       $definitions->table_definition[$idx]->key,
+                        $definitions->table_definition[$idx]->phisical_tables);
       writeMethodsGetSet($fileHandler, $definitions->table_definition[$idx]->column);
       
       closeClassDefinition($fileHandler);
@@ -148,6 +203,7 @@
       $logger->debug("Closing the file $fileName");
       fclose($fileHandler);
    }
+   
    
    print("... end\n");
 ?>

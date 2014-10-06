@@ -5,19 +5,20 @@
     * In this class the logical structure table is defined.
     */
     
-   include_once dirname(__FILE__).'/Core/TableDef.php';
-   include_once dirname(__FILE__).'/Core/ColumnDef.php';
-   include_once dirname(__FILE__).'/Core/ColumnType.php';
-   include_once 'GenericTable.php';
+   include_once dirname(__FILE__).'/DatabaseCore/TableDef.php';
+   include_once dirname(__FILE__).'/DatabaseCore/ColumnDef.php';
+   include_once dirname(__FILE__).'/DatabaseCore/ColumnType.php';
+   include_once dirname(__FILE__).'/DatabaseCore/GenericTable.php';
+   include_once dirname(__FILE__).'/DatabaseCore/TableMapping.php';
 
-   include_once 'LoggerMgr/LoggerMgr.php';
+   include_once '../LoggerMgr/LoggerMgr.php';
 
    class $theClassName extends GenericTable {
 
      private $loggerM;
 
      /*
-      * Contant Table Name
+      * Constant Table Name
       */
      const $theClassNameTableC = "$theClassName";
 
