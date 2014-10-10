@@ -7,7 +7,7 @@
    set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
    
    include_once 'TableIf.php';
-   include_once '../LoggerMgr/LoggerMgr.php';
+   include_once 'LoggerMgr/LoggerMgr.php';
    include_once 'DatabaseMgr.php';
    
    class GenericTable implements TableIf{
@@ -59,6 +59,7 @@
        * Open the table. Load the table date from database into memory
        */
       public function open(){
+         
          $this->loggerM->trace("Enter");
          DatabaseMgr::openTable($this->tableMappingM, $this->tableDataM);
          $this->loggerM->trace("Exit");
@@ -96,7 +97,7 @@
        * 
        * @return boolean. True when the table has not rows.
        */
-      public function isEmtpy(){
+      public function isEmpty(){
          $this->loggerM->trace("Enter");
          $this->loggerM->trace("Exit");
          return ( count($this->tableDataM) == 0);

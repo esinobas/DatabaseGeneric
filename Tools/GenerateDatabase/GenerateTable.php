@@ -64,27 +64,29 @@
    }
    
    function writeConstructor($theFileHandler, $theClassName, $theColumns, $theKey,
-                             $thePhisicalDef){
+         $thePhisicalDef){
       global $logger;
-      
+   
       $logger->trace("Enter");
       $text  = "     /*\n";
       $text .= "      * Constructor. The table definition is done here\n";
       $text .= "      */\n";
-      $text .= "\tpublic function __constructor(){\n";
+      $text .= "\tpublic function __construct(){\n";
       $text .= "      \$this->loggerM = LoggerMgr::Instance()->getLogger(__CLASS__);\n";
       $text .= "       \n";
-      $text .= "\t\t\$this->tableDefinitionM = new TableDef(\$this->".$theClassName."TableC);\n";
+      $text .= "      \$this->loggerM->trace(\"Enter\");\n";
+      $text .= "        parent::__construct();\n";
+      $text .= "\t\t\$this->tableDefinitionM = new TableDef(self::".$theClassName."TableC);\n";
       for ($idx= 0; $idx <count($theColumns); $idx++){
-         $text .="\t\t\$this->tableDefinitionM.addColumn(new ColumnDef(
-                              \$this->".$theColumns[$idx]->name."ColumnC,"
-                               .getColumnType($theColumns[$idx]->type)."));\n";
+         $text .="\t\t\$this->tableDefinitionM->addColumn(new ColumnDef(
+                              self::".$theColumns[$idx]->name."ColumnC,"
+                                       .getColumnType($theColumns[$idx]->type)."));\n";
       }
       for ($idx= 0; $idx <count($theKey); $idx++){
-         $text .="\t\t\$this->tableDefinitionM.addKey(\$this->"
-                                    .$theColumns[$idx]->name."ColumnC);\n";
+         $text .="\t\t\$this->tableDefinitionM->addKey(self::"
+               .$theColumns[$idx]->name."ColumnC);\n";
       }
-      
+   
       /*** Write the phisical mapping ***/
       $text .= "   \n";
       $text .= "      \$this->tableMappingM = new TableMapping();\n";
@@ -92,22 +94,23 @@
       for( $idx = 0; $idx < count($tables); $idx++){
          $text .= "      \n";
          $logger->debug("Add phisical table [ " . $tables[$idx]->name . " ]");
-         $text .= "      \$this->tableMappingM->addTable(\$this->phisical".$tables[$idx]->name.
-                      "C);\n";
+         $text .= "      \$this->tableMappingM->addTable(self::phisical".$tables[$idx]->name.
+         "C);\n";
          $columns = $tables[$idx]->columns->column;
-         
+          
          for ($idxColumns = 0; $idxColumns < count($columns); $idxColumns++){
             $logger->debug("Add mapping between phisical column: [ ".
                   $tables[$idx]->name.".".$columns[$idxColumns]->name ." ] and [ ".
                   $columns[$idxColumns]->logical ." ]");
-            $text .= "      \$this->tableMappingM->addColumn(\n            \$this->phisical".
-                  $tables[$idx]->name."C ,\n            \$this->phisical".
-                  $columns[$idxColumns]->name."ColumnC ,\n            \$this->".
+            $text .= "      \$this->tableMappingM->addColumn(\n            self::phisical".
+                  $tables[$idx]->name."C ,\n            self::phisical".
+                  $columns[$idxColumns]->name."ColumnC ,\n            self::".
                   $columns[$idxColumns]->logical ."ColumnC);\n";
-            
-         }   
+   
+         }
       }
       $text .= "      \n";
+      $text .= "      \$this->loggerM->trace(\"Exit\");\n";
       $text .= "\t}\n";
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");

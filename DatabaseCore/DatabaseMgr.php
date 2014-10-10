@@ -6,12 +6,12 @@
    set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
    
    include_once '../DatabaseType/MySqlDatabase.php';
-   include_once '../../LoggerMgr.php';
+   include_once 'LoggerMgr/LoggerMgr.php';
    include_once './TableMapping.php';
    
    class DatabaseMgr {
       
-      const DatabaseConfigC = "../DatabaseType/database.ini";
+      const DatabaseConfigC = "../DatabaseType/Database.ini";
       
       /**
        * Create a database object with the parameters saved in the config file
@@ -24,7 +24,8 @@
          // Now only is used MySql. In a futher a factory should be created
          
          $logger->debug("Create database with data within [ " . self::DatabaseConfigC ." ]");
-         $database = new MySqlDatabase(self::DatabaseConfigC);
+         //$database = new MySqlDatabase(self::DatabaseConfigC);
+         $a = new MySqlDatabase();
          $logger->trace("Exit");
          return $database;
       }
@@ -40,15 +41,17 @@
          $logger->trace("Enter");
          $sqlSelect = "select ";
          $logger->trace("Get columns from table mapping");
-         $columns = $theTableMapping->getColumns();
+         $columns = array_keys($theTableMapping->getColumns());
+         $logger->trace("Number of columns: ". count($columns));
+        
          $isFirst = true;
          for ($i = 0; $i < count($columns); $i++){
-            $logger->trace("Column Name [ $i ] -> [ " . $columns[$i] . "]");
+            $logger->trace("Column Name [ $i ] -> [ " . $columns[$i] . " ]");
             if ($isFirst){
                $sqlSelect .= $columns[$i];
                $isFirst = false;
             }else{
-               $columns[$i] .= ", ".$columns[$i];
+               $sqlSelect .= ", ".$columns[$i];
             }
          }
          $logger->trace("Get tables from table mapping");
@@ -56,12 +59,12 @@
          $tables = $theTableMapping->getTables();
          $isFirst = true;
          for ($i = 0; $i < count($tables); $i++){
-            $logger->trace("Table Name [ $i ] -> [ " . $tables[$i] . "]");
+            $logger->trace("Table Name [ $i ] -> [ " . $tables[$i] . " ]");
             if ($isFirst){
                $sqlSelect .= $tables[$i];
                $isFirst = false;
             }else{
-               $tables[$i] .= ", ".$tables[$i];
+               $sqlSelect .= ", ".$tables[$i];
             }
          }
          $logger->trace("Get conditions from table mapping. It is not implemented");
@@ -75,6 +78,7 @@
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
          $logger->trace("Enter");
          $sqlSelect = self::createSqlSelect($theTableMapping);
+         $database = self::getDatabase();
          $logger->trace("Exit");
       }
    }
