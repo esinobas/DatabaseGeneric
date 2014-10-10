@@ -4,10 +4,11 @@
     * them expecific data.
     */
 
-   set_include_path( get_include_path() . PATH_SEPARATOR . "../");
+   set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
    
    include_once 'TableIf.php';
    include_once '../LoggerMgr/LoggerMgr.php';
+   include_once 'DatabaseMgr.php';
    
    class GenericTable implements TableIf{
       
@@ -59,12 +60,13 @@
        */
       public function open(){
          $this->loggerM->trace("Enter");
+         DatabaseMgr::openTable($this->tableMappingM, $this->tableDataM);
          $this->loggerM->trace("Exit");
          
       }
       
       /**
-       * Refress the table data and initialize the cursor
+       * Refresh the table data and initialize the cursor
        */
       public function refresh(){
          $this->loggerM->trace("Enter");

@@ -4,6 +4,7 @@
     * File that contains the class DBIterator.
     * That class is used to access at the query results
     */
+    set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
     
     class DBIterator{
        

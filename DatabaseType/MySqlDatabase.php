@@ -1,15 +1,18 @@
 <?php
 
-   define('VARCHAR',0);
-   define('INT',1);
-   define('FLOAT',2);
-   define('BOOLEAN',3);
-   define('TIMESTAMP',4);
+   /**
+    * Class with the implemantation to connect and access to MySql Database
+    * @author tebi
+    *
+    */
+   set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
+   
+   include_once '../DatabaseCore/DatabaseIf.php';
     
-   class MySqlDAO{
+   class MySqlDatabase implements DatabaseIf{
            
       /**
-       * Property
+       * Properties
        */
       private $hostM;
       
@@ -23,9 +26,15 @@
       
       private $isConnectedM;
       
-      function __construct(){
+      /**
+       * Constructor
+       * 
+       * @param $theConnectionData. Array with the connection data to can 
+       * connecto with the database.
+       */
+      function __construct($theFilePathConnectionData){
          
-         $connetion_data = parse_ini_file("../Database.ini");
+         $connetion_data = parse_ini_file($theFilePathConnectionData);
          $this->hostM = $connetion_data["server"];
          $this->userM = $connetion_data["user"];
          $this->pwdM = $connetion_data["pwd"];
@@ -33,6 +42,13 @@
          $this->isConnectedM = false;
       }
       
+      /**
+       * Constructor
+       * @param string $theHost
+       * @param string $theUser
+       * @param string $thePwd
+       * @param string $theDDBB
+       */
       function __construct($theHost, $theUser, $thePwd, $theDDBB){
 
          $this->hostM = $theHost;
@@ -52,9 +68,10 @@
         }     
      }
      
-     
-     
-           
+      /**
+       * (non-PHPdoc)
+       * @see DatabaseIf::connect()
+       */
       public function connect($autoCommit = true) {
       
          if (! $this->isConnectedM){
@@ -73,7 +90,10 @@
       }
    
 
-
+      /**
+       * (non-PHPdoc)
+       * @see DatabaseIf::getConnectError()
+       */
       public function getConnectError(){
          
          
@@ -81,11 +101,19 @@
             
       }
      
+      /**
+       * (non-PHPdoc)
+       * @see DatabaseIf::isConnected()
+       */
       public function isConnected(){
         
          return $this->isConnectedM;     
       }
      
+      /**
+       * (non-PHPdoc)
+       * @see DatabaseIf::closeConnection()
+       */
       public function closeConnection(){
            if ($this->isConnectedM){
         
@@ -94,6 +122,10 @@
            }
       }
       
+      /**
+       * (non-PHPdoc)
+       * @see DatabaseIf::query()
+       */
       public function query($theQuery){
          
          
@@ -118,27 +150,46 @@
          return $resultQuery;
       }     
      
-  
+     /**
+      * (non-PHPdoc)
+      * @see DatabaseIf::sqlCommand()
+      */
      public function sqlCommand($theCommand){
         
         $this->connectionM->query($theCommand);
         return $this->connectionM->errno;     
      }
      
+     /**
+      * (non-PHPdoc)
+      * @see DatabaseIf::getSqlError()
+      */
      public function getSqlError(){
         return $this->connectionM->error;
      }
  
+     /**
+      * (non-PHPdoc)
+      * @see DatabaseIf::getLastId()
+      */
      public function getLastId(){
      
         return $this->connectionM->insert_id;        
      }
      
+     /**
+      * (non-PHPdoc)
+      * @see DatabaseIf::commit()
+      */
      public function commit(){
         
         $this->connectionM->commit();
      }
      
+     /**
+      * (non-PHPdoc)
+      * @see DatabaseIf::rollback()
+      */
      public function rollback(){
         
         $this->connectionM->rollback();

@@ -2,7 +2,8 @@
    /**
     * Class to define a table
     */
-
+   set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
+   
    include_once 'ColumnDef.php';
    
    class TableDef{

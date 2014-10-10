@@ -5,6 +5,9 @@
     * With this mapping, the application is able to access to the 
     * database
     */
+   
+   set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
+   
    class TableMapping{
       
       /*** private properties ***/
@@ -26,6 +29,12 @@
        * @var 
        */
       private $conditionsM = array();
+      
+      /*** To be used in a futher ***/
+      private $pathDatabaseConfigM = "";
+      
+      private $databaseTypeM = 0;
+      
       
       /****** Public Functions *********/
       
@@ -67,6 +76,24 @@
        */
       public function addCondition($theCondition){
          $this->conditionsM[count($this->conditionsM)] = $theCondition;
+      }
+      
+      /**
+       * Returns the defined columns in the mapping
+       * 
+       * @return An array with the phisical names columns of the table
+       */
+      public function getColumns(){
+         
+         return  $this->columnsMappingM;
+      }
+      
+      /**
+       * Returns the phisical tables names
+       */
+      public function getTables(){
+         
+         return $this->phisicalTablesM;
       }
    }
 ?>
