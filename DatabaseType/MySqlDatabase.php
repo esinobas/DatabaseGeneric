@@ -7,7 +7,7 @@
     */
    set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
    
-   include_once '../DatabaseCore/DatabaseIf.php';
+   include_once 'DatabaseCore/DatabaseIf.php';
     
    class MySqlDatabase implements DatabaseIf{
            
@@ -49,14 +49,12 @@
        * @param string $thePwd
        * @param string $theDDBB
        */
-      function __construct($theHost, $theUser, $thePwd, $theDDBB){
-
-         $this->hostM = $theHost;
+      /*
          $this->userM = $theUser;
          $this->pwdM = $thePwd;
          $this->ddbbM = $theDDBB;      
          $this->isConnectedM = false;  
-      }
+      }*/
       
       /**
       * Destructor

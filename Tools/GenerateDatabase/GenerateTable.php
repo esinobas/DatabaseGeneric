@@ -4,7 +4,7 @@
     * database access
     */
    set_include_path( get_include_path() . PATH_SEPARATOR . 
-   dirname(__FILE__)."/../../..");
+   dirname(__FILE__)."/../../../..");
    
    include_once 'LoggerMgr/LoggerMgr.php';
    $logger = LoggerMgr::Instance()->getLogger("main");

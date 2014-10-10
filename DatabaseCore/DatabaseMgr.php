@@ -5,9 +5,9 @@
 
    set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
    
-   include_once '../DatabaseType/MySqlDatabase.php';
+   include_once 'DatabaseType/MySqlDatabase.php';
    include_once 'LoggerMgr/LoggerMgr.php';
-   include_once './TableMapping.php';
+   include_once 'TableMapping.php';
    
    class DatabaseMgr {
       
@@ -24,8 +24,8 @@
          // Now only is used MySql. In a futher a factory should be created
          
          $logger->debug("Create database with data within [ " . self::DatabaseConfigC ." ]");
-         //$database = new MySqlDatabase(self::DatabaseConfigC);
-         $a = new MySqlDatabase();
+         $database = new MySqlDatabase(self::DatabaseConfigC);
+         //$a = new MySqlDatabase();
          $logger->trace("Exit");
          return $database;
       }
