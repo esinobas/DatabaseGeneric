@@ -5,9 +5,11 @@
     */
 
    set_include_path( get_include_path() . PATH_SEPARATOR . "../");
+   
+   include_once 'TableIf.php';
    include_once '../LoggerMgr/LoggerMgr.php';
    
-   class GenericTable{
+   class GenericTable implements TableIf{
       
       /**************** Properties **************/
       /**
@@ -125,7 +127,7 @@
       }
       
       /**
-       * Updateht current row
+       * Update the current row
        */
       public function update(){
          $this->loggerM->trace("Enter");
