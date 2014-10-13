@@ -75,7 +75,8 @@
        */
       public function addColumn($theTable, $thePhisicalColumn, $theLogicalColumn){
          $this->loggerM->trace("Enter");
-         $composedColumn = $theTable.'.'.$thePhisicalColumn;
+         //$composedColumn = $theTable.'.'.$thePhisicalColumn;
+         $composedColumn = $thePhisicalColumn;
          $this->loggerM->trace("Add column [ $composedColumn ]. Num. colums [ " .
                count($this->columnsMappingM) . " ]");
          //Should be check if the parameter $the table exist before

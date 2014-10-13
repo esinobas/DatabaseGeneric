@@ -23,7 +23,7 @@
        * 
        * @var integer. The current row index of the table
        */
-      private $rowIdxM = 0;
+      private $rowIdxM = -1;
       
       /**
        * 
@@ -80,9 +80,9 @@
        * @return boolean. When the table cursor has arrived to the table finish
        */
       public function next(){
-         $this->loggerM->trace("Enter");
+         $this->loggerM->trace("Enter: ". count($this->tableDataM));
          $thereAreMoreRows = true;
-         if ( $this->rowIdxM == count($this->tableDataM)){
+         if ( $this->rowIdxM == (count($this->tableDataM) -1) ){
             $thereAreMoreRows = false;
          }else{
             $this->rowIdxM ++;
@@ -108,7 +108,7 @@
        */
       public function rewind(){
          $this->loggerM->trace("Enter");
-         $this->rowIdxM = 0;
+         $this->rowIdxM = -1;
          $this->loggerM->trace("Exit");
       }
       

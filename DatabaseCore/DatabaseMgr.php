@@ -11,7 +11,8 @@
    
    class DatabaseMgr {
       
-      const DatabaseConfigC = "/home/tebi/Datos/webserver/tools/php/Database/DatabaseType/Database.ini";
+      //const DatabaseConfigC = "/home/tebi/Datos/webserver/MEMcakesandcookies/www/controlpanel/Cursos/php/Database/DatabaseType/Database.ini";
+      const DatabaseConfigC = "DatabaseType/Database.ini";
       
       /**
        * Create a database object with the parameters saved in the config file
@@ -24,7 +25,9 @@
          // Now only is used MySql. In a futher a factory should be created
          
          $logger->debug("Create database with data within [ " . self::DatabaseConfigC ." ]");
+         
          $database = new MySqlDatabase(self::DatabaseConfigC);
+         
          $logger->trace("Exit");
          return $database;
       }
@@ -72,7 +75,7 @@
          return $sqlSelect;
       }
       
-      static public function openTable(TableMapping $theTableMapping, $theReturnData){
+      static public function openTable(TableMapping $theTableMapping, array &$theReturnData){
          
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
          $logger->trace("Enter");
@@ -80,11 +83,32 @@
          $database = self::getDatabase();
          if ($database->connect()){
             $logger->debug("The connection with the database was established successfull");
+            
+            $logger->debug("Execute query [ $sqlSelect ]");
+            $resultQuery = $database->query($sqlSelect);
+            $logger->debug("The query has [ " .count($resultQuery) ." ] rows");
+            $columns = $theTableMapping->getColumns();
+            $keys = array_keys($columns);
+            
+            for($idx = 0; $idx < count($resultQuery); $idx++){
+               $theReturnData[$idx] = array();
+               for ($idxKeys = 0; $idxKeys < count($keys); $idxKeys++){
+                  $logger->trace("Get value for row [ $idx ] key [ $keys[$idxKeys] ]".
+                        " -> [ " . $resultQuery[$idx][$keys[$idxKeys]]. " ]");
+                  
+                  
+                  $theReturnData[$idx][$columns[$keys[$idxKeys]]] =
+                                  $resultQuery[$idx][$keys[$idxKeys]];
+                  
+               }
+               
+            }
             $database->closeConnection();
          }else{
             $error = $database->getConnectError();
             $logger->error("An error has been produced in connect [ $error ]");
          }
+         
          $logger->trace("Exit");
       }
    }

@@ -122,19 +122,19 @@
       $text = "      \n";
       for ($idx= 0; $idx <count($theColumns); $idx++){
          $text.= "      public function get".$theColumns[$idx]->name."(){\n";
-         $text.= "         \$logger->trace(\"Enter\");\n";
-         $text.= "         return \$this->get(\$this->".
+         $text.= "         \$this->loggerM->trace(\"Enter\");\n";
+         $text.= "         return \$this->get(self::".
                          $theColumns[$idx]->name."ColumnC);\n";
-         $text.= "         \$logger->trace(\"Exit\");\n";
+         $text.= "         \$this->loggerM->trace(\"Exit\");\n";
          $text.= "      }\n";
          $text.= "      \n";
          $text.= "      public function set".$theColumns[$idx]->name."($".
                           $theColumns[$idx]->name."){\n";
-         $text.= "         \$logger->trace(\"Enter\");\n";
-         $text.= "         \$this->set(\$this->".
+         $text.= "         \$this->loggerM->trace(\"Enter\");\n";
+         $text.= "         \$this->set(self::".
                $theColumns[$idx]->name."ColumnC, \$".
                               $theColumns[$idx]->name.");\n";
-         $text.= "         \$logger->trace(\"Exit\");\n";
+         $text.= "         \$this->loggerM->trace(\"Exit\");\n";
          $text.= "      }\n";
       }
       fwrite($theFileHandler, $text);
