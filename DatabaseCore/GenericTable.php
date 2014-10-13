@@ -44,6 +44,13 @@
        */
       protected $tableMappingM = NULL;
       
+      /**
+       * Multi dimensional array where the table keys is stored to a quick access
+       * The format is: [<key name>, array[<key>, <data>]]
+       * @var array
+       */
+      private $keysM = array();
+      
       /**************** Methods **************/
       /**
        * Constructor of the class. It is protected to avoid it is instanced 
@@ -55,6 +62,28 @@
          $this->loggerM->trace("Exit");
       }
       
+      /**************** Private methods *******/
+      /**
+       * Funtion which with the table definition create the index key
+       */
+      private function createKeys(){
+         $this->loggerM->trace("Enter");
+         $keys = $this->tableDefinitionM->getKeys();
+         for ($idx = 0; $idx < count($keys); $idx ++){
+            $this->loggerM->trace("Create index key for [ $keys[$idx] ]");
+            $this->keysM[$keys[$idx]] = array();
+            for ($idxData = 0; $idxData < count($this->tableDataM); $idxData++){
+               $this->loggerM->trace("Create entry: [ " .$this->tableDataM[$idxData][$keys[$idx]] . " ]");
+               
+               $this->keysM[$keys[$idx]][$this->tableDataM[$idxData][$keys[$idx]]] = $idxData;
+            }
+             
+            
+         }
+         
+         $this->loggerM->trace("Exit");
+      }
+      
       /**
        * Open the table. Load the table date from database into memory
        */
@@ -62,6 +91,7 @@
          
          $this->loggerM->trace("Enter");
          DatabaseMgr::openTable($this->tableMappingM, $this->tableDataM);
+         $this->createKeys();
          $this->loggerM->trace("Exit");
          
       }
@@ -130,11 +160,22 @@
       }
       
       /**
-       * Update the current row
+       * (non-PHPdoc)
+       * @see TableIf::update()
        */
       public function update(){
          $this->loggerM->trace("Enter");
           
+         $this->loggerM->trace("Exit");
+      }
+      
+      /**
+       * (non-PHPdoc)
+       * @see TableIf::updateRow()
+       */
+      public function updateRow(){
+         $this->loggerM->trace("Enter");
+         
          $this->loggerM->trace("Exit");
       }
       
@@ -153,8 +194,36 @@
          $this->loggerM->trace("Enter");
          $this->loggerM->debug("Set value [ $theValue ] into column [ $theColumn ]");
          $this->tableDataM[$this->rowIdxM][$theColumn] = $theValue;
+         $this->tableDataM[$this->rowIdxM][DatabaseMgr::modifiedRowC] = true;
          $this->loggerM->trace("Exit");
                      
+      }
+      
+      /**
+       * (non-PHPdoc)
+       * @see TableIf::searchByKey()
+       */
+      public function searchByKey($theKey){
+         
+         $this->loggerM->trace("Enter");
+         $this->loggerM->trace("Search key [ $theKey ]");
+         $definedKey = $this->tableDefinitionM->getKeys()[0];
+         $this->loggerM->trace("Search in [ $definedKey ][ $theKey ]");
+         if ( ! array_key_exists($theKey, $this->keysM[$definedKey]) ){
+            $this->loggerM->trace("The key was not found");
+            $this->loggerM->trace("Exit");
+            return false;
+         }else{
+            
+            
+            $row = $this->keysM[$definedKey][$theKey];
+            $this->loggerM->trace("The row is [ $row ]");
+            $this->rowIdxM = $row;
+            $this->loggerM->trace("Exit");
+            return true;
+         }
+        
+         
       }
    }
 ?>

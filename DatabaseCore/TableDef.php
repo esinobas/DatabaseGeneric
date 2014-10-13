@@ -17,6 +17,7 @@
       private $nameM;
       private $columnsM = array();
       private $keyM = array();
+      private $indexM = array();
       
       /*
        * *******************
@@ -65,6 +66,21 @@
       public function getKeys(){
          
          return $this->keyM;
+      }
+      
+      /**
+       * Add an index into table definition 
+       */
+      public function addIndex($theIndex){
+         $this->indexM[count($this->indexM)]  = $theIndexM; 
+      }
+      
+      /**
+       * Return the array with the index
+       */
+      public function getIndex(){
+         
+         return $this->indexM;
       }
    }
 ?>

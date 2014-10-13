@@ -48,7 +48,19 @@
        * Modify all the data contains in the current row, and also in the 
        * database table
        */
+      public function updateRow();
+      
+      /**
+       * Saves in the database, all the rows modified in the table
+       */
       public function update();
       
+      /**
+       * Searchs a row in the table by the table key.
+       * It the searched row is not found, the function returns a boolean value
+       * to false. Otherwise it returns a true.
+       * @param unknown $theKey
+       */
+      public function searchByKey($theKey);
    }
 ?>

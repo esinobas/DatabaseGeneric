@@ -14,6 +14,8 @@
       //const DatabaseConfigC = "/home/tebi/Datos/webserver/MEMcakesandcookies/www/controlpanel/Cursos/php/Database/DatabaseType/Database.ini";
       const DatabaseConfigC = "DatabaseType/Database.ini";
       
+      const modifiedRowC ="ColumnModifiedRow";
+      
       /**
        * Create a database object with the parameters saved in the config file
        * @return MySqlDatabase
@@ -101,8 +103,10 @@
                                   $resultQuery[$idx][$keys[$idxKeys]];
                   
                }
+               $theReturnData[$idx][self::modifiedRowC] = false;
                
             }
+            
             $database->closeConnection();
          }else{
             $error = $database->getConnectError();
