@@ -11,7 +11,7 @@
    
    class DatabaseMgr {
       
-      const DatabaseConfigC = "../DatabaseType/Database.ini";
+      const DatabaseConfigC = "/home/tebi/Datos/webserver/tools/php/Database/DatabaseType/Database.ini";
       
       /**
        * Create a database object with the parameters saved in the config file
@@ -25,7 +25,6 @@
          
          $logger->debug("Create database with data within [ " . self::DatabaseConfigC ." ]");
          $database = new MySqlDatabase(self::DatabaseConfigC);
-         //$a = new MySqlDatabase();
          $logger->trace("Exit");
          return $database;
       }
@@ -79,6 +78,13 @@
          $logger->trace("Enter");
          $sqlSelect = self::createSqlSelect($theTableMapping);
          $database = self::getDatabase();
+         if ($database->connect()){
+            $logger->debug("The connection with the database was established successfull");
+            $database->closeConnection();
+         }else{
+            $error = $database->getConnectError();
+            $logger->error("An error has been produced in connect [ $error ]");
+         }
          $logger->trace("Exit");
       }
    }

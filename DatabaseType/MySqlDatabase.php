@@ -35,11 +35,15 @@
       function __construct($theFilePathConnectionData){
          
          $connetion_data = parse_ini_file($theFilePathConnectionData);
-         $this->hostM = $connetion_data["server"];
-         $this->userM = $connetion_data["user"];
-         $this->pwdM = $connetion_data["pwd"];
-         $this->ddbbM = $connetion_data["ddbb"];
-         $this->isConnectedM = false;
+         if ($connetion_data != false ){
+            $this->hostM = $connetion_data["server"];
+            $this->userM = $connetion_data["user"];
+            $this->pwdM = $connetion_data["pwd"];
+            $this->ddbbM = $connetion_data["ddbb"];
+            $this->isConnectedM = false;
+         }else{
+            //print("The file $theFilePathConnectionData doesn't exist");
+         }
       }
       
       /**
@@ -75,9 +79,9 @@
          if (! $this->isConnectedM){
             
             $this->connectionM = new mysqli($this->hostM, $this->userM, $this->pwdM,$this->ddbbM);
-      
+            
             if ($this->connectionM->connect_errno){
-          
+            
                return false;
             }   
             
