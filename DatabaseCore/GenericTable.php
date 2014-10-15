@@ -62,27 +62,7 @@
          $this->loggerM->trace("Exit");
       }
       
-      /**************** Private methods *******/
-      /**
-       * Funtion which with the table definition create the index key
-       */
-      private function createKeys(){
-         $this->loggerM->trace("Enter");
-         $keys = $this->tableDefinitionM->getKeys();
-         for ($idx = 0; $idx < count($keys); $idx ++){
-            $this->loggerM->trace("Create index key for [ $keys[$idx] ]");
-            $this->keysM[$keys[$idx]] = array();
-            for ($idxData = 0; $idxData < count($this->tableDataM); $idxData++){
-               $this->loggerM->trace("Create entry: [ " .$this->tableDataM[$idxData][$keys[$idx]] . " ]");
-               
-               $this->keysM[$keys[$idx]][$this->tableDataM[$idxData][$keys[$idx]]] = $idxData;
-            }
-             
-            
-         }
-         
-         $this->loggerM->trace("Exit");
-      }
+     
       
       /**
        * Open the table. Load the table date from database into memory
@@ -91,7 +71,6 @@
          
          $this->loggerM->trace("Enter");
          DatabaseMgr::openTable($this->tableMappingM, $this->tableDataM);
-         $this->createKeys();
          $this->loggerM->trace("Exit");
          
       }
@@ -101,6 +80,8 @@
        */
       public function refresh(){
          $this->loggerM->trace("Enter");
+         $this->tableDataM = NULL;
+         $this->open();
          $this->loggerM->trace("Exit");
           
       }
@@ -130,7 +111,7 @@
       public function isEmpty(){
          $this->loggerM->trace("Enter");
          $this->loggerM->trace("Exit");
-         return ( count($this->tableDataM) == 0);
+         return ( count($this->tableDataM ) == 0);
       }
       
       /**
@@ -207,23 +188,58 @@
          
          $this->loggerM->trace("Enter");
          $this->loggerM->trace("Search key [ $theKey ]");
-         $definedKey = $this->tableDefinitionM->getKeys()[0];
-         $this->loggerM->trace("Search in [ $definedKey ][ $theKey ]");
-         if ( ! array_key_exists($theKey, $this->keysM[$definedKey]) ){
-            $this->loggerM->trace("The key was not found");
-            $this->loggerM->trace("Exit");
-            return false;
+         
+         $result = false;
+         $columnkey = $this->tableDefinitionM->getKeys()[0];
+         $this->loggerM->debug("Search in [ $columnkey ][ $theKey ]");
+         if ($this->searchByColummn($columnkey, $theKey)){
+            $this->loggerM->debug("The [ $theKey ] has been found in [ $columnkey ]");
+            $result = true;
          }else{
+            $this->loggerM->debug("The [ $theKey ] has NOT been found in [ $columnkey ]");
             
-            
-            $row = $this->keysM[$definedKey][$theKey];
-            $this->loggerM->trace("The row is [ $row ]");
-            $this->rowIdxM = $row;
+         }
+         $this->loggerM->trace("Exit");
+         return $result;
+      }
+      
+      /**
+       * (non-PHPdoc)
+       * @see TableIf::searchByColummn()
+       */
+      public function searchByColummn($theColumn, $theValue){
+         $this->loggerM->trace("Enter");
+         
+         $callbackSearchByColumn = function ($var) use ($theColumn, $theValue){
+            $this->loggerM->trace("Enter");
+            $this->loggerM->trace("Exit");
+            return ($var[$theColumn] == $theValue);
+         };
+         
+         $this->loggerM->debug("Searching value [ $theValue ] in column ".
+               "[ $theColumn ]");
+         
+         $resultArray = array_filter($this->tableDataM, $callbackSearchByColumn);
+         $this->loggerM->trace("The search has had [ ". count ($resultArray) ." ]");
+         if ( count ($resultArray) > 0){
+            $this->tableDataM = $resultArray;
             $this->loggerM->trace("Exit");
             return true;
+         }else{
+            $this->loggerM->trace("Exit");
+            return false;
          }
-        
-         
       }
+      
+      /**
+       * (non-PHPdoc)
+       * @see TableIf::getCardinality()
+       */
+      public function getCardinality(){
+         $this->loggerM->trace("Enter");
+         $this->loggerM->trace("Exit");
+         return count($this->tableDataM);
+         
+      } 
    }
 ?>

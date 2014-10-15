@@ -62,5 +62,22 @@
        * @param unknown $theKey
        */
       public function searchByKey($theKey);
+      
+      /**
+       * Searchs a row or a set of rows which the column value is equal to 
+       * the searched value. 
+       * @param string $theColumn
+       * @param unknown $theValue
+       * 
+       * @return A boolen value that indicates if the row or rows have been found
+       */
+      public function searchByColummn($theColumn, $theValue);
+      
+      /**
+       * Returns the number of rows that the table has.
+       * 
+       * @return A integer with the number of rows which the table has.
+       */
+      public function getCardinality();
    }
 ?>
