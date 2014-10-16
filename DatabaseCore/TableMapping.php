@@ -20,12 +20,6 @@
        */
       private $phisicalTablesM = array();
       
-      /**
-       * Structure where are saved the mapping between the logial column
-       * with the phisical column. The phisical columns must be defined
-       * table name "." column name
-       */
-      private $columnsMappingM = array();
       
       /**
        * Strucuture where are saved the conditions which the query must comply.

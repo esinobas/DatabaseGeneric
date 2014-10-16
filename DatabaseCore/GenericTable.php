@@ -96,6 +96,9 @@
          if ( $this->rowIdxM == (count($this->tableDataM) -1) ){
             $thereAreMoreRows = false;
          }else{
+            if ($this->rowIdxM != -1){
+               next($this->tableDataM);
+            }
             $this->rowIdxM ++;
          }
          $this->loggerM->trace("Exit");
@@ -164,19 +167,19 @@
          
          $this->loggerM->trace("Enter");
          $this->loggerM->debug("Get value from column [ $theColumn ]->".
-                "[ ".$this->tableDataM[$this->rowIdxM][$theColumn] ." ]");
+                "[ ".current($this->tableDataM)[$theColumn] ." ]");
          
          $this->loggerM->trace("Exit");
-         return $this->tableDataM[$this->rowIdxM][$theColumn];
+         return current($this->tableDataM)[$theColumn];
       }
       
       protected function set($theColumn, $theValue){
           
          $this->loggerM->trace("Enter");
          $this->loggerM->debug("Set value [ $theValue ] into column [ $theColumn ]");
-         if ($this->tableDataM[$this->rowIdxM][$theColumn] != $theValue){
-            $this->tableDataM[$this->rowIdxM][$theColumn] = $theValue;
-            $this->tableDataM[$this->rowIdxM][DatabaseMgr::modifiedRowC] = true;
+         if (current($this->tableDataM)[$theColumn] != $theValue){
+            current($this->tableDataM)[$theColumn] = $theValue;
+            current($this->tableDataM)[DatabaseMgr::modifiedRowC] = true;
          }
          $this->loggerM->trace("Exit");
                      
@@ -225,6 +228,7 @@
          $this->loggerM->trace("The search has had [ ". count ($resultArray) ." ]");
          if ( count ($resultArray) > 0){
             $this->tableDataM = $resultArray;
+            $this->rowIdxM = -1;
             $this->loggerM->trace("Exit");
             return true;
          }else{

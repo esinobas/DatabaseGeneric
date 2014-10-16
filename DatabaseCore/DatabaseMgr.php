@@ -166,6 +166,19 @@
          $arrayModifiedRows = array_filter($theTableData, $callbackFilter);
          $logger->trace("The table has been filter. The table has [ ".
                count($arrayModifiedRows) . " ] rows after the filter" );
+         $database = self::getDatabase();
+         if ($database->connect(false)){
+            $logger->debug("The connection with the database was established successfull");
+            for ($i = 0; $i < count($arrayModifiedRows); $i++){
+               $sqlStament = self::createSqlUpdate($theTableMapping, current($arrayModifiedRows));
+               next($arrayModifiedRows);
+               $logger->debug("Execute sql stament [ $sqlStament ]");
+            }
+            $database->closeConnection();
+         }else{
+            $error = $database->getConnectError();
+            $logger->error("An error has been produced in connect [ $error ]");
+         }
          $logger->trace("Exit");
       }
    }
