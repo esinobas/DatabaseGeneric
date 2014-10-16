@@ -176,11 +176,15 @@
       protected function set($theColumn, $theValue){
           
          $this->loggerM->trace("Enter");
+         $this->loggerM->trace("Current value in [ $theColumn ] -> [ ".
+               current($this->tableDataM)[$theColumn] ." ]");
          $this->loggerM->debug("Set value [ $theValue ] into column [ $theColumn ]");
          if (current($this->tableDataM)[$theColumn] != $theValue){
-            current($this->tableDataM)[$theColumn] = $theValue;
-            current($this->tableDataM)[DatabaseMgr::modifiedRowC] = true;
+            
+            $this->tableDataM[key($this->tableDataM)][$theColumn] = $theValue;
+            $this->tableDataM[key($this->tableDataM)][DatabaseMgr::modifiedRowC] = true;
          }
+        
          $this->loggerM->trace("Exit");
                      
       }
