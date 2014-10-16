@@ -146,7 +146,7 @@
        */
       public function update(){
          $this->loggerM->trace("Enter");
-          
+         DatabaseMgr::updateTable($this->tableMappingM, $this->tableDataM);
          $this->loggerM->trace("Exit");
       }
       
@@ -174,8 +174,10 @@
           
          $this->loggerM->trace("Enter");
          $this->loggerM->debug("Set value [ $theValue ] into column [ $theColumn ]");
-         $this->tableDataM[$this->rowIdxM][$theColumn] = $theValue;
-         $this->tableDataM[$this->rowIdxM][DatabaseMgr::modifiedRowC] = true;
+         if ($this->tableDataM[$this->rowIdxM][$theColumn] != $theValue){
+            $this->tableDataM[$this->rowIdxM][$theColumn] = $theValue;
+            $this->tableDataM[$this->rowIdxM][DatabaseMgr::modifiedRowC] = true;
+         }
          $this->loggerM->trace("Exit");
                      
       }

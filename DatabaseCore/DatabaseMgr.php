@@ -77,6 +77,13 @@
          return $sqlSelect;
       }
       
+      /**
+       * Performes a query to the data base, and reads the table data and loads
+       * in memory the data table.
+       * 
+       * @param TableMapping $theTableMapping
+       * @param array $theReturnData
+       */
       static public function openTable(TableMapping $theTableMapping, array &$theReturnData){
          
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
@@ -113,6 +120,44 @@
             $logger->error("An error has been produced in connect [ $error ]");
          }
          
+         $logger->trace("Exit");
+      }
+      
+      /**
+       * Creates the sql update stament with the information saved in the 
+       * parameter $theTableMapping
+       * 
+       * @param TableMapping $theTableMapping
+       * @return string with the sql update stament
+       */
+      static protected function createSqlUpdate(TableMapping $theTableMapping,
+                             array $theRowData){
+         $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
+         $logger->trace("Enter");
+         $sqlUpdate = "update ";
+         $logger->trace("Exit");
+         return $sqlUpdate;
+      }
+      
+      /**
+       * Updates the table data that are in the memory.
+       * 
+       * @param TableMapping $theTableMapping
+       * @param array $theTableData
+       */
+      static public function updateTable(TableMapping $theTableMapping,
+                                          array $theTableData){
+         $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
+         $logger->trace("Enter");
+         $logger->trace("Filter the modified rows. The table has [ ".
+                  count($theTableData) . " ] rows before the filter" );
+         $callbackFilter = function ($var) use ($logger){
+            $logger->trace("Enter/Exit");
+            return $var[self::modifiedRowC];
+         };
+         $arrayModifiedRows = array_filter($theTableData, $callbackFilter);
+         $logger->trace("The table has been filter. The table has [ ".
+               count($arrayModifiedRows) . " ] rows after the filter" );
          $logger->trace("Exit");
       }
    }
