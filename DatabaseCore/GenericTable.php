@@ -163,8 +163,8 @@
       protected function get($theColumn){
          
          $this->loggerM->trace("Enter");
-         $this->loggerM->debug("Get value from column [ $theColumn ]->
-                [ ".$this->tableDataM[$this->rowIdxM][$theColumn] ." ]");
+         $this->loggerM->debug("Get value from column [ $theColumn ]->".
+                "[ ".$this->tableDataM[$this->rowIdxM][$theColumn] ." ]");
          
          $this->loggerM->trace("Exit");
          return $this->tableDataM[$this->rowIdxM][$theColumn];

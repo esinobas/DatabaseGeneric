@@ -44,34 +44,39 @@
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
          $logger->trace("Enter");
          $sqlSelect = "select ";
-         $logger->trace("Get columns from table mapping");
-         $columns = array_keys($theTableMapping->getColumns());
-         $logger->trace("Number of columns: ". count($columns));
-        
-         $isFirst = true;
-         for ($i = 0; $i < count($columns); $i++){
-            $logger->trace("Column Name [ $i ] -> [ " . $columns[$i] . " ]");
-            if ($isFirst){
-               $sqlSelect .= $columns[$i];
-               $isFirst = false;
-            }else{
-               $sqlSelect .= ", ".$columns[$i];
-            }
-         }
+         $sqlTables = "";
+         $sqlColumns = "";
+         
          $logger->trace("Get tables from table mapping");
-         $sqlSelect .= " from ";
          $tables = $theTableMapping->getTables();
+         $tablesName = array_keys($tables);
          $isFirst = true;
+         $isFirstColum = true;
          for ($i = 0; $i < count($tables); $i++){
-            $logger->trace("Table Name [ $i ] -> [ " . $tables[$i] . " ]");
+            $logger->trace("Table Name [ $i ] -> [ " . $tablesName[$i] . " ]");
             if ($isFirst){
-               $sqlSelect .= $tables[$i];
+               $sqlTables .= $tablesName[$i];
                $isFirst = false;
             }else{
-               $sqlSelect .= ", ".$tables[$i];
+               $sqlTables .= ", ".$tablesName[$i];
+            }
+            $logger->trace("Get columns from table mapping");
+            $columns = $tables[$tablesName[$i]];
+            $logger->trace("The table has [ ". count($columns). " ] columns");
+            $columnsKey = array_keys($columns);
+            for ($x = 0; $x < count($columns); $x++){
+               $logger->trace("Column Name [ $x ] -> [ " . $columnsKey[$x] . " ]");
+               if ($isFirstColum){
+                  $sqlColumns .= $columnsKey[$x];
+                  $isFirstColum = false;
+               }else{
+                  $sqlColumns .= ", ".$columnsKey[$x];
+               }
             }
          }
+         
          $logger->trace("Get conditions from table mapping. It is not implemented");
+         $sqlSelect .= $sqlColumns . " from " . $sqlTables;
          $logger->debug($sqlSelect);
          $logger->trace("Exit");
          return $sqlSelect;
@@ -96,21 +101,24 @@
             $logger->debug("Execute query [ $sqlSelect ]");
             $resultQuery = $database->query($sqlSelect);
             $logger->debug("The query has [ " .count($resultQuery) ." ] rows");
-            $columns = $theTableMapping->getColumns();
-            $keys = array_keys($columns);
+            $tableNames = array_keys($theTableMapping->getTables());
             
             for($idx = 0; $idx < count($resultQuery); $idx++){
                $theReturnData[$idx] = array();
-               for ($idxKeys = 0; $idxKeys < count($keys); $idxKeys++){
-                  $logger->trace("Get value for row [ $idx ] key [ $keys[$idxKeys] ]".
-                        " -> [ " . $resultQuery[$idx][$keys[$idxKeys]]. " ]");
+               
+               for ($i = 0; $i < count($tableNames); $i++){
+                  $keys = array_keys($theTableMapping->getColumns($tableNames[$i]));
+                  $logger->trace("Get columns from table [ " . $tableNames[$i] ." ]");
+                  for ($idxKeys = 0; $idxKeys < count($keys); $idxKeys++){
+                     $logger->trace("Get value for row [ $idx ] key [ $keys[$idxKeys] ]".
+                           " -> [ " . $resultQuery[$idx][$keys[$idxKeys]]. " ]");
                   
                   
-                  $theReturnData[$idx][$columns[$keys[$idxKeys]]] =
-                                  $resultQuery[$idx][$keys[$idxKeys]];
-                  
-               }
-               $theReturnData[$idx][self::modifiedRowC] = false;
+                     $theReturnData[$idx][$theTableMapping->getColumns($tableNames[$i])[$keys[$idxKeys]]] =
+                                     $resultQuery[$idx][$keys[$idxKeys]];
+                  }
+                }
+             $theReturnData[$idx][self::modifiedRowC] = false;
                
             }
             
