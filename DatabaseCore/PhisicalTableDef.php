@@ -79,8 +79,8 @@
       public function addColumn($thePhisicalColumn, $theDataType, $theLogicColumn){
          $this->loggerM->trace("Enter");
          $this->loggerM->trace("Add phisical column [ $thePhisicalColumn ]".
-                           "with data type [ $theDataType ] and logic column ".
-                           "[ $theLogicColumn] into table [ ". $this->tableNameM.
+                           " with data type [ $theDataType ] and logic column ".
+                           "[ $theLogicColumn ] into table [ ". $this->tableNameM.
                             " ]");
          $this->phisicalLogicalColumnsM[$thePhisicalColumn] = $theLogicColumn;
          $this->columnDataTypeM[$thePhisicalColumn] = $theDataType;

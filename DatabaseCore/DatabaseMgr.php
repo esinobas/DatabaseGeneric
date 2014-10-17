@@ -61,7 +61,7 @@
                $sqlTables .= ", ".$tablesName[$i];
             }
             $logger->trace("Get columns from table mapping");
-            $columns = $tables[$tablesName[$i]];
+            $columns = $theTableMapping->getColumns($tablesName[$i]);
             $logger->trace("The table has [ ". count($columns). " ] columns");
             $columnsKey = array_keys($columns);
             for ($x = 0; $x < count($columns); $x++){

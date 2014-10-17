@@ -102,18 +102,22 @@
        * @return An array with the phisical table definition
        */
       public function getColumns($theTable){
-         $this->loggerM->trace("Enter/Exit");
-         return  $this->phisicalTablesM[$theTable];
+         
+         $this->loggerM->trace("Get columns of the table [ ".
+              $theTable . " ] that has [ " . 
+           count($this->phisicalTablesM[$theTable]->getColumns()) . " ]");
+         $this->loggerM->trace("Enter");
+         return  $this->phisicalTablesM[$theTable]->getColumns();
       }
       
       /**
-       * Returns the phisical tables names
+       * Returns the definition phisical tables
        * 
-       * @return An array with the table names
+       * @return An array with the definition phiical tables
        */
       public function getTables(){
          $this->loggerM->trace("Enter/Exit");
-         return keys($this->phisicalTablesM);
+         return $this->phisicalTablesM;
       }
    }
 ?>
