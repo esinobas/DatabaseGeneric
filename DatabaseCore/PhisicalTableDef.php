@@ -73,7 +73,7 @@
       /**
        * Addes a columns definition into the table definicion
        * @param string $thePhisicalColumn
-       * @param string $theDataType
+       * @param integer $theDataType
        * @param string $theLogicColumn
        */
       public function addColumn($thePhisicalColumn, $theDataType, $theLogicColumn){

@@ -10,7 +10,6 @@
    include_once dirname(__FILE__).'/DatabaseCore/ColumnDef.php';
    include_once dirname(__FILE__).'/DatabaseCore/ColumnType.php';
    include_once dirname(__FILE__).'/DatabaseCore/TableMapping.php';
-
    include_once dirname(__FILE__).'/DatabaseCore/GenericTable.php';
    include_once 'LoggerMgr/LoggerMgr.php';
 

@@ -8,6 +8,7 @@
    
    set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
    include_once 'LoggerMgr/LoggerMgr.php';
+   include_once 'PhisicalTableDef.php';
    
    class TableMapping{
       
@@ -55,27 +56,31 @@
          $this->loggerM->trace("Enter");
          $this->loggerM->trace("Add table [ $theTable ]. Num. tables [ " .
                             count($this->phisicalTablesM) . " ]");
-         $this->phisicalTablesM[$theTable] = array();
+         $this->phisicalTablesM[$theTable] = new PhisicalTableDef($theTable);
          $this->loggerM->trace("Exit");
       }
       
       /**
-       * Functiosn that addes a new mapping between a phisical column and 
+       * Function that addes a new mapping between a phisical column and 
        * a logical column
        * 
        * @param string $theTable: The phisical table name
        * @param string $thePhisicalColumn: The phisical column name
        * @param string $theLogicalColumn: The logical column name
+       * @param integer $theDataType: The phisical column data type.
        */
-      public function addColumn($theTable, $thePhisicalColumn, $theLogicalColumn){
+      public function addColumn($theTable, $thePhisicalColumn, 
+                               $theLogicalColumn, $theDataType){
          $this->loggerM->trace("Enter");
         
          $composedColumn = $thePhisicalColumn;
-         $this->loggerM->trace("Add column [ $composedColumn ] in [ $theTable ]. ".
-               "Num. colums [ " . count($this->phisicalTablesM[$theTable]) . " ]");
+         $this->loggerM->trace("Add column [ $thePhisicalColumn ] in [ $theTable ]. ".
+               "With data type [ $theDataType ]. Num. colums [ " . count($this->phisicalTablesM[$theTable]) . " ]");
          //Should be check if the parameter $the table exist before
          //inserte the mapping
-         $this->phisicalTablesM[$theTable][$composedColumn] = $theLogicalColumn;
+         $this->phisicalTablesM[$theTable]->addColumn($thePhisicalColumn, 
+                                                      $theDataType,
+                                                      $theLogicalColumn);
          $this->loggerM->trace("Exit");
       }
       
@@ -94,7 +99,7 @@
       /**
        * Returns the defined columns in the mapping
        * @param string The table name
-       * @return An array with the phisical names columns of the table
+       * @return An array with the phisical table definition
        */
       public function getColumns($theTable){
          $this->loggerM->trace("Enter/Exit");
@@ -103,10 +108,12 @@
       
       /**
        * Returns the phisical tables names
+       * 
+       * @return An array with the table names
        */
       public function getTables(){
          $this->loggerM->trace("Enter/Exit");
-         return $this->phisicalTablesM;
+         return keys($this->phisicalTablesM);
       }
    }
 ?>

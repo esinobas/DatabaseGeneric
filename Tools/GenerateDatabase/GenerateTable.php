@@ -101,11 +101,18 @@
          for ($idxColumns = 0; $idxColumns < count($columns); $idxColumns++){
             $logger->debug("Add mapping between phisical column: [ ".
                   $tables[$idx]->name.".".$columns[$idxColumns]->name ." ] and [ ".
-                  $columns[$idxColumns]->logical ." ]");
+                  $columns[$idxColumns]->logical ." ] with type [ " .
+                  $columns[$idxColumns]->type ." ]");
+            $columnType = "";
+            if (strtoupper($columns[$idxColumns]->type) == "STRING"){
+               $logger->trace("Data type is [ ColumnType::stringC ]" );
+               $columnType = "ColumnType::stringC";
+            }
             $text .= "      \$this->tableMappingM->addColumn(\n            self::phisical".
                   $tables[$idx]->name."C ,\n            self::phisical".
                   $columns[$idxColumns]->name."ColumnC ,\n            self::".
-                  $columns[$idxColumns]->logical ."ColumnC);\n";
+                  $columns[$idxColumns]->logical ."ColumnC,\n            " .
+                  $columnType . ");\n";
    
          }
       }
