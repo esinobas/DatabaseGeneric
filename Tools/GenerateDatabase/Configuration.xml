@@ -10,6 +10,11 @@
       <name>Value</name>
       <type>string</type>
    </column>
+   <column>
+      <name>Description</name>
+      <type>string</type>
+   </column>
+
    <key>
       <column>Property</column>
    </key>
@@ -21,12 +26,22 @@
             <column>
                <name>Property</name>
                <logical>Property</logical>
+               <type>string</type>
             </column>
             <column>
                <name>Value</name>
                <logical>Value</logical>
+               <type>string</type>
             </column>
+	    <column>
+               <name>Description</name>
+               <logical>Description</logical>
+               <type>string</type>
+	    </column>
          </columns>
+         <Key>
+            Property
+         </Key>
       </table>
    </phisical_tables>
 </table_definition>

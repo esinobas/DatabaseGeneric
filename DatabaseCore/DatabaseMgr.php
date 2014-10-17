@@ -135,14 +135,32 @@
        * Creates the sql update stament with the information saved in the 
        * parameter $theTableMapping
        * 
-       * @param TableMapping $theTableMapping
+       * @param $theTableName
+       * @param array $theTableMapping
+       * @param array $theRowData
        * @return string with the sql update stament
        */
-      static protected function createSqlUpdate(TableMapping $theTableMapping,
-                             array $theRowData){
+      static protected function createSqlUpdate($theTableName, 
+                                                array $theTableMapping,
+                                                array $theRowData){
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
          $logger->trace("Enter");
-         $sqlUpdate = "update ";
+         $sqlUpdate = "update ".$theTableName ." set ";
+         $isFirst = true;
+         for ($i = 0; $i < count ($theRowData); $i++){
+            $key = key($theRowData);
+            $value = current($theRowData);
+            next($theRowData);
+            $phisicalColumn = array_search($key, $theTableMapping);
+            if ($phisicalColumn){ 
+               if ($isFirst){
+                  $isFirst = false;
+                  $sqlUpdate .= $phisicalColumn . " = '" . $value ."'";
+               }else{
+                  $sqlUpdate .= ", ".$phisicalColumn . " = '" . $value ."'";
+               }
+            }
+         }
          $logger->trace("Exit");
          return $sqlUpdate;
       }
@@ -169,8 +187,14 @@
          $database = self::getDatabase();
          if ($database->connect(false)){
             $logger->debug("The connection with the database was established successfull");
+            $tables = $theTableMapping->getTables();
             for ($i = 0; $i < count($arrayModifiedRows); $i++){
-               $sqlStament = self::createSqlUpdate($theTableMapping, current($arrayModifiedRows));
+               for ($x = 0; $x < count($tables); $x++){
+                  $sqlStament = self::createSqlUpdate(key($tables),
+                                          current($tables), current($arrayModifiedRows));
+                  next($tables);
+               }
+               reset($tables);
                next($arrayModifiedRows);
                $logger->debug("Execute sql stament [ $sqlStament ]");
             }

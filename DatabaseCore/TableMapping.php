@@ -69,7 +69,7 @@
        */
       public function addColumn($theTable, $thePhisicalColumn, $theLogicalColumn){
          $this->loggerM->trace("Enter");
-         //$composedColumn = $theTable.'.'.$thePhisicalColumn;
+        
          $composedColumn = $thePhisicalColumn;
          $this->loggerM->trace("Add column [ $composedColumn ] in [ $theTable ]. ".
                "Num. colums [ " . count($this->phisicalTablesM[$theTable]) . " ]");
