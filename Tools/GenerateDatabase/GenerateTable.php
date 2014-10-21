@@ -115,6 +115,11 @@
                   $columnType . ");\n";
    
          }
+         $logger->trace("Add the table key [ " . $tables[$idx]->key . " ]");
+         $text .= "      \n";
+         $text .= "      \$this->tableMappingM->addKey(self::phisical".
+                               $tables[$idx]->name."C,\n            self::phisical".
+                               $tables[$idx]->key."ColumnC );\n";
       }
       $text .= "      \n";
       $text .= "      \$this->loggerM->trace(\"Exit\");\n";

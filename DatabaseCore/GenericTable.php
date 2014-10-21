@@ -159,7 +159,7 @@
        */
       public function updateRow(){
          $this->loggerM->trace("Enter");
-         
+         DatabaseMgr::updateTable($this->tableMappingM, current($this->tableDataM);)
          $this->loggerM->trace("Exit");
       }
       

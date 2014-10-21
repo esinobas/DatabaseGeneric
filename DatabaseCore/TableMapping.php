@@ -113,11 +113,35 @@
       /**
        * Returns the definition phisical tables
        * 
-       * @return An array with the definition phiical tables
+       * @return An array with the definition phisical tables
        */
       public function getTables(){
          $this->loggerM->trace("Enter/Exit");
          return $this->phisicalTablesM;
+      }
+      
+      /**
+       * Adds the column table key
+       * @param string $theTable
+       * @param string $theKey
+       */
+      public function addKey($theTable, $theKey){
+         $this->loggerM->trace("Enter");
+         $this->loggerM->trace("Add key [ $theKey ] to table [ $theTable ]");
+         $this->phisicalTablesM[$theTable]->addKey($theKey);
+         $this->loggerM->trace("Exit");
+         
+      }
+      
+      /**
+       * Returns the phisical table definition
+       * @param string $theTable
+       * @return A PhisicalTableDef class
+       */
+      public function getTableDefinition($theTable){
+         
+         $this->loggerM->trace("Enter/Exit");
+         return $this->phisicalTablesM[$theTable];
       }
    }
 ?>

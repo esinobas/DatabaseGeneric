@@ -71,6 +71,15 @@
       }
       
       /**
+       * Returns the table name
+       * @return string
+       */
+      public function getName(){
+         $this->loggerM->trace("Enter/Exit");
+         return $this->tableNameM;
+      }
+      
+      /**
        * Addes a columns definition into the table definicion
        * @param string $thePhisicalColumn
        * @param integer $theDataType
@@ -116,6 +125,12 @@
          
          $this->loggerM->trace("Enter/Exit");
          return $this->columnDataTypeM[$thePhisicalColumn];
+      }
+      
+      public function getKey(){
+         
+         $this->loggerM->trace("Enter/Exit");
+         return $this->keyM;
       }
       
    }

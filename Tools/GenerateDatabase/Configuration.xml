@@ -39,9 +39,7 @@
                <type>string</type>
 	    </column>
          </columns>
-         <Key>
-            Property
-         </Key>
+         <key>Property</key>
       </table>
    </phisical_tables>
 </table_definition>

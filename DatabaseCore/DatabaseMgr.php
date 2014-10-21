@@ -8,6 +8,7 @@
    include_once 'DatabaseType/MySqlDatabase.php';
    include_once 'LoggerMgr/LoggerMgr.php';
    include_once 'TableMapping.php';
+   include_once 'ColumnType.php';
    
    class DatabaseMgr {
       
@@ -135,32 +136,48 @@
        * Creates the sql update stament with the information saved in the 
        * parameter $theTableMapping
        * 
-       * @param $theTableName
-       * @param array $theTableMapping
-       * @param array $theRowData
+       * @param $theTableDef. Class PhisicalTableDef where is saved the 
+       * phisical table definition
        * @return string with the sql update stament
        */
-      static protected function createSqlUpdate($theTableName, 
-                                                array $theTableMapping,
+      static protected function createSqlUpdate(PhisicalTableDef $theTableDef,
                                                 array $theRowData){
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
          $logger->trace("Enter");
-         $sqlUpdate = "update ".$theTableName ." set ";
+         $sqlUpdate = "update ".$theTableDef->getName() ." set ";
          $isFirst = true;
          for ($i = 0; $i < count ($theRowData); $i++){
             $key = key($theRowData);
             $value = current($theRowData);
             next($theRowData);
-            $phisicalColumn = array_search($key, $theTableMapping);
+            $phisicalColumn = array_search($key, $theTableDef->getColumns());
             if ($phisicalColumn){ 
                if ($isFirst){
                   $isFirst = false;
-                  $sqlUpdate .= $phisicalColumn . " = '" . $value ."'";
+                  $sqlUpdate .= $phisicalColumn . " = ";
+                  if ($theTableDef->getDataType($phisicalColumn) == ColumnType::stringC){
+                     $sqlUpdate .= "'" . $value ."'";
+                  }else{
+                     $sqlUpdate .= $value;
+                  }
                }else{
-                  $sqlUpdate .= ", ".$phisicalColumn . " = '" . $value ."'";
+                  $sqlUpdate .= ", ".$phisicalColumn . " = ";
+                  if ($theTableDef->getDataType($phisicalColumn) == ColumnType::stringC){
+                     $sqlUpdate .= "'" . $value ."'";
+                  }else{
+                     $sqlUpdate .= $value;
+                  }
                }
             }
          }
+         $sqlUpdate .= " where " . $theTableDef->getKey() . " = ";
+         if ($theTableDef->getDataType($theTableDef->getKey()) == ColumnType::stringC ){
+            $sqlUpdate .= "'".$theRowData[$theTableDef->getLogicalColumn($theTableDef->getKey())];
+            $sqlUpdate .= "'";
+         }else{
+            $sqlUpdate .= $theRowData[$theTableDef->getLogicalColumn($theTableDef->getKey())];
+         }
+         $logger->debug($sqlUpdate);
          $logger->trace("Exit");
          return $sqlUpdate;
       }
@@ -184,24 +201,43 @@
          $arrayModifiedRows = array_filter($theTableData, $callbackFilter);
          $logger->trace("The table has been filter. The table has [ ".
                count($arrayModifiedRows) . " ] rows after the filter" );
+         if (count($arrayModifiedRows) == 0){
+            $logger->trace("Exit");
+            return;
+         }
          $database = self::getDatabase();
-         if ($database->connect(false)){
+         if ( $database->connect(false)){
             $logger->debug("The connection with the database was established successfull");
             $tables = $theTableMapping->getTables();
+            $error = false;
             for ($i = 0; $i < count($arrayModifiedRows); $i++){
                for ($x = 0; $x < count($tables); $x++){
-                  $sqlStament = self::createSqlUpdate(key($tables),
-                                          current($tables), current($arrayModifiedRows));
+                  $sqlStament = self::createSqlUpdate(
+                                          $theTableMapping->getTableDefinition(current($tables)->getName()),
+                                          current($arrayModifiedRows));
                   next($tables);
                }
                reset($tables);
                next($arrayModifiedRows);
                $logger->debug("Execute sql stament [ $sqlStament ]");
+               if ($database->sqlCommand($sqlStament) == 0 ){
+                  $logger->debug("The command was successfull executed");
+               }else{
+                  $logger->error("A error has produced [ " . 
+                             $database->getSqlError() . " ]");
+                  $error = true;
+               }
+            }
+            if (! $error ){
+               $logger->trace("The commit is executed");
+               $database->commit();
             }
             $database->closeConnection();
          }else{
+            
             $error = $database->getConnectError();
             $logger->error("An error has been produced in connect [ $error ]");
+            
          }
          $logger->trace("Exit");
       }
