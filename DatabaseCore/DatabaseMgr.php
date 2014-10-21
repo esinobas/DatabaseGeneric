@@ -241,6 +241,59 @@
          }
          $logger->trace("Exit");
       }
+      
+      /**
+       * Creates the delete sql command
+       * @param PhisicalTableDef $thePhisicalTableDef
+       * @param array $theRowData
+       * @return string
+       */
+      static protected function createSqlDelete(PhisicalTableDef $thePhisicalTableDef,
+                                         array $theRowData){
+         
+         $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
+         $logger->trace("Enter");
+         $sqlDelete = "delete from " . $thePhisicalTableDef->getName() . " where ";
+         $sqlDelete .= $thePhisicalTableDef->getKey() ." = ";
+         if ($thePhisicalTableDef->getDataType($thePhisicalTableDef->getKey()) == 
+                                                   ColumnType::stringC ){
+            $sqlDelete .= "'". $theRowData[$thePhisicalTableDef->getLogicalColumn($thePhisicalTableDef->getKey())];
+            $sqlDelete .= "'";
+         }else{
+            $sqlDelete .= $theRowData[$thePhisicalTableDef->getLogicalColumn($thePhisicalTableDef->getKey())];
+         }
+        
+         $logger->debug($sqlDelete);
+         $logger->trace("Exit");
+         return $sqlDelete;
+      }
+      
+      /**
+       * Delete the current row from the table
+       * @param TableMapping $theTableMapping
+       * @param array $theRow
+       */
+      static public function delete(TableMapping $theTableMapping,
+                                          array $theRow){
+         
+         $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
+         $logger->trace("Enter");
+         $database = self::getDatabase();
+         if ( $database->connect(false)){
+            $error = false;
+            //Go to the last table in the array. It is the last table in the 
+            //database configuration xml file.
+            //In a relationship, always are removed the last rows of the it.
+            $table = end($theTableMapping->getTables());
+               
+               $sqlDelete = self::createSqlDelete(
+                                                  $table,
+                                                  $theRow);
+            
+            $database->closeConnection();
+         }
+         $logger->trace("Exit");
+      }
    }
 
 ?>

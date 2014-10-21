@@ -80,7 +80,8 @@
        */
       public function refresh(){
          $this->loggerM->trace("Enter");
-         $this->tableDataM = NULL;
+         unset($this->tableDataM);
+         $this->tableDataM = array();
          $this->open();
          $this->loggerM->trace("Exit");
           
@@ -131,7 +132,8 @@
        */
       public function delete(){
          $this->loggerM->trace("Enter");
-         
+         DatabaseMgr::delete($this->tableMappingM, current($this->tableDataM));
+         //$this->refresh();
          $this->loggerM->trace("Exit");
       }
       /**
@@ -150,6 +152,7 @@
       public function update(){
          $this->loggerM->trace("Enter");
          DatabaseMgr::updateTable($this->tableMappingM, $this->tableDataM);
+         //$this->refresh();
          $this->loggerM->trace("Exit");
       }
       
@@ -159,7 +162,8 @@
        */
       public function updateRow(){
          $this->loggerM->trace("Enter");
-         DatabaseMgr::updateTable($this->tableMappingM, current($this->tableDataM);)
+         DatabaseMgr::updateTable($this->tableMappingM, current($this->tableDataM));
+         //$this->refresh();
          $this->loggerM->trace("Exit");
       }
       
@@ -231,6 +235,7 @@
          $resultArray = array_filter($this->tableDataM, $callbackSearchByColumn);
          $this->loggerM->trace("The search has had [ ". count ($resultArray) ." ]");
          if ( count ($resultArray) > 0){
+            unset($this->tableDataM);
             $this->tableDataM = $resultArray;
             $this->rowIdxM = -1;
             $this->loggerM->trace("Exit");
