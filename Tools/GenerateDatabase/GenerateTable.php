@@ -84,7 +84,7 @@
       }
       for ($idx= 0; $idx <count($theKey); $idx++){
          $text .="\t\t\$this->tableDefinitionM->addKey(self::"
-               .$theColumns[$idx]->name."ColumnC);\n";
+               .$theKey[$idx]->column."ColumnC);\n";
       }
    
       /*** Write the phisical mapping ***/
@@ -128,26 +128,30 @@
       $logger->trace("Exit");
    }
    
-   function writeMethodsGetSet($theFileHandler, $theColumns){
+   function writeMethodsGetSet($theFileHandler, $theColumns, $theKey){
       global $logger;
       $logger->trace("Enter");
       $text = "      \n";
       for ($idx= 0; $idx <count($theColumns); $idx++){
+         
          $text.= "      public function get".$theColumns[$idx]->name."(){\n";
-         $text.= "         \$this->loggerM->trace(\"Enter\");\n";
+         $text.= "         \$this->loggerM->trace(\"Enter/Exit\");\n";
          $text.= "         return \$this->get(self::".
                          $theColumns[$idx]->name."ColumnC);\n";
-         $text.= "         \$this->loggerM->trace(\"Exit\");\n";
          $text.= "      }\n";
          $text.= "      \n";
-         $text.= "      public function set".$theColumns[$idx]->name."($".
-                          $theColumns[$idx]->name."){\n";
-         $text.= "         \$this->loggerM->trace(\"Enter\");\n";
-         $text.= "         \$this->set(self::".
-               $theColumns[$idx]->name."ColumnC, \$".
-                              $theColumns[$idx]->name.");\n";
-         $text.= "         \$this->loggerM->trace(\"Exit\");\n";
-         $text.= "      }\n";
+         
+         if ( strcmp($theColumns[$idx]->name, $theKey[0]->column) != 0){
+         
+            $text.= "      public function set".$theColumns[$idx]->name."($".
+                             $theColumns[$idx]->name."){\n";
+            $text.= "         \$this->loggerM->trace(\"Enter\");\n";
+            $text.= "         \$this->set(self::".
+                  $theColumns[$idx]->name."ColumnC, \$".
+                                 $theColumns[$idx]->name.");\n";
+            $text.= "         \$this->loggerM->trace(\"Exit\");\n";
+            $text.= "      }\n";
+         }
       }
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
@@ -176,6 +180,36 @@
          }
          $text .= "\n";
       }
+      fwrite($theFileHandler, $text);
+      $logger->trace("Exit");
+   }
+   
+   function writeMethodInsert($theFileHandler, $theColumns, $theKey){
+      global $logger;
+      $logger->trace("Enter");
+      $text = "      \n";
+      $text .= "      public function insert(";
+      $isFirts = true;
+      foreach ($theColumns as $column){
+         if (strcmp($column->name, $theKey->column))
+            if ($isFirts ){
+               $text .= " \$the".$column->name;
+               $isFirts = false;
+            }else{
+               $text .= "\n                              ,\$the".$column->name;
+            }
+      }
+      $text .= "\n                                ){\n";
+      $text .= "         \$this->loggerM->trace(\"Enter\");\n";
+      $text .= "         \$arrayData = array();\n";
+      foreach ($theColumns as $column){
+         if (strcmp($column->name, $theKey->column)){
+            $text .= "         \$arrayData[self::".$column->name."ColumnC] = \$the".$column->name.";\n";
+         }
+      }
+      $text .= "         parent::insertData(\$arrayData);\n";
+      $text .= "         \$this->loggerM->trace(\"Exit\");\n";
+      $text .= "      }\n";
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
    }
@@ -210,7 +244,10 @@
                        $definitions->table_definition[$idx]->column,
                        $definitions->table_definition[$idx]->key,
                         $definitions->table_definition[$idx]->phisical_tables);
-      writeMethodsGetSet($fileHandler, $definitions->table_definition[$idx]->column);
+      writeMethodInsert($fileHandler, $definitions->table_definition[$idx]->column,
+                       $definitions->table_definition[$idx]->key);
+      writeMethodsGetSet($fileHandler, $definitions->table_definition[$idx]->column,
+                         $definitions->table_definition[$idx]->key);
       
       closeClassDefinition($fileHandler);
       fflush($fileHandler);

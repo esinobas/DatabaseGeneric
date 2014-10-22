@@ -137,9 +137,12 @@
          $this->loggerM->trace("Exit");
       }
       /**
-       * Insert a new row in the table
+       * Inserts data in the table. The data are passed in an array parameter, 
+       * where the array key is the column name and the array value is the
+       * data value.
+       * @param array $theDataArray
        */
-      public function insert(){
+      public function insertData($theDataArray){
          $this->loggerM->trace("Enter");
           
          $this->loggerM->trace("Exit");

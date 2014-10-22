@@ -40,9 +40,12 @@
       public function delete();
       
       /**
-       * Insert a new row in the memory and in the table
+       * Inserts data in the table. The data are passed in an array parameter, 
+       * where the array key is the column name and the array value is the
+       * data value.
+       * @param array $theDataArray
        */
-      public function insert();
+      public function insertData($theDataArray);
       
       /**
        * Modify all the data contains in the current row, and also in the 
