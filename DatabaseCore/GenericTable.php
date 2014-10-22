@@ -144,7 +144,7 @@
        */
       public function insertData($theDataArray){
          $this->loggerM->trace("Enter");
-          
+         DatabaseMgr::insert($this->tableMappingM, $theDataArray, $this->tableDataM); 
          $this->loggerM->trace("Exit");
       }
       

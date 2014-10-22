@@ -289,10 +289,85 @@
                $sqlDelete = self::createSqlDelete(
                                                   $table,
                                                   $theRow);
+            //Todavia no esta hecho el borrado, falta implementar.
+            //Cuando este terminado el insert, borramos
             
             $database->closeConnection();
          }
          $logger->trace("Exit");
+      }
+      
+      static protected function createSqlInsert(PhisicalTableDef $theTableDef,
+                                                array $theData){
+         $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
+         $logger->trace("Enter");
+         $sqlInsert = "insert into ".$theTableDef->getName() ." (";
+         $values = " values (";
+         $isFirst = true;
+         $phisicalColumns = array_keys($theTableDef->getColumns());
+         foreach ($phisicalColumns as $phisicalColumn){
+            if (strcmp($phisicalColumn,$theTableDef->getKey()) != 0){
+               $logicalColumn = $theTableDef->getLogicalColumn($phisicalColumn);
+               $dataType = $theTableDef->getDataType($phisicalColumn);
+               if ($isFirst){
+                  $sqlInsert .= $phisicalColumn;
+                  if (strcmp($dataType, ColumnType::stringC) == 0){
+                     $values .= "'".$theData[$logicalColumn]."'";
+                  }else{
+                     $values .= $theData[$logicalColumn];
+                  }
+                  $isFirst = false;
+               }else{
+                  $sqlInsert .= ", ".$phisicalColumn;
+                  if (strcmp($dataType, ColumnType::stringC) == 0){
+                     $values .= ", '".$theData[$logicalColumn]."'";
+                  }else{
+                     $values .= ", ".$theData[$logicalColumn];
+                  }
+               }
+            }
+         }
+         $values .= ")";
+         $sqlInsert .= ")" .$values;
+         $logger->debug($sqlInsert);
+         $logger->trace("Exit");
+         return $sqlInsert;
+      }
+      
+      /**
+       * Inserts in the database a new row with the passed data like argument
+       * A boolean value is returned indicanding if the insert is performanced
+       * with success or not.
+       * @param TableMapping $theTableMapping
+       * @param array $theNewData
+       * @param array $theReturnData
+       * @return boolean
+       */
+      static public function insert(TableMapping $theTableMapping,
+                                    array $theNewData,
+                                    array &$theReturnData){
+         $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
+         $logger->trace("Enter");
+         $result = true;
+         $database = self::getDatabase();
+         if ($database->connect(false)){
+            $logger->debug("The connection with the database was established successfull");
+            foreach ($theTableMapping->getTables() as $table){
+               $sqlInsert = self::createSqlInsert($table, $theNewData);
+               $logger->debug("Execute command [ $sqlInsert ]");
+               if ($database->sqlCommand($sqlInsert) == 0){
+                  $logger->trace("Command executed successful");
+               }else{
+                  
+               }
+            }
+         }else{
+            $error = $database->getConnectError();
+            $logger->error("An error has been produced in connect [ $error ]");
+            $result = false;
+         }
+         $logger->trace("Exit");
+         return $result;
       }
    }
 
