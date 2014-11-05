@@ -1,0 +1,34 @@
+   
+   /******************* MAIN *********************************/
+
+  
+   if (count($_POST) > 0){
+      $logger = LoggerMgr::Instance()->getLogger("RequestFromWeb.php");
+   
+
+      $logger->info("A request has been received from web");
+   
+      if (!isset ($_POST[$COMMAND]) || ! isset ($_POST[$PARAMS])){
+         $logger->error("Unmatched format request. Absence of param $COMMAND or $PARAMS");
+         print("ERROR 500. Unmatched format request. Absence of param $COMMAND or $PARAMS");
+      }else{
+         $strCommand = $_POST[$COMMAND];
+         $strParams = $_POST[$PARAMS];
+         $logger->trace("The command is [ $strCommand ] and the params are [ $strParams ]");
+         $params = json_decode($strParams, true);
+         $table = getTable($params[$PARAM_TABLE]);
+         $logger->trace("The command parameter is [ $strCommand ]");
+         $logger->trace("Open the table [ $params[$PARAM_TABLE] ]");
+         $table->open();
+      
+         if (strcmp(strtoupper($strCommand), $COMMAND_UPDATE) == 0){
+            $logger->debug("It is a update command in table [ ". $table->getName() . " ]");
+            updateData($table, $params[$PARAM_ROWS]);
+         }
+
+         $logger->trace("The request has been processed");
+         print ("OK. 200");
+      }
+   } 
+   
+?>

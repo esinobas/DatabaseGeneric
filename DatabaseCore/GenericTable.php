@@ -156,7 +156,7 @@
       public function update(){
          $this->loggerM->trace("Enter");
          DatabaseMgr::updateTable($this->tableMappingM, $this->tableDataM);
-         //$this->refresh();
+         $this->refresh();
          $this->loggerM->trace("Exit");
       }
       
@@ -166,8 +166,8 @@
        */
       public function updateRow(){
          $this->loggerM->trace("Enter");
-         DatabaseMgr::updateTable($this->tableMappingM, current($this->tableDataM));
-         //$this->refresh();
+         DatabaseMgr::updateTable($this->tableMappingM, array(current($this->tableDataM)));
+         $this->refresh();
          $this->loggerM->trace("Exit");
       }
       

@@ -11,10 +11,16 @@
   
   
    
-   function closeClassDefinition($theFileHandler){
+   function closeClassDefinition($theFileHandler, $theClassName){
       global $logger;
       $logger->trace("Enter");
-      $text = "   }\n";
+      $logger->trace("Write getName method for the class [ $theClassName ]");
+      $text = "\n      public function getName(){\n";
+      $text .= "         \$this->loggerM->trace(\"Enter / Exit\");\n";
+      $text .= "         return self::".$theClassName."TableC;\n";
+      $text .= "      }\n";
+      $text .= "   }";
+     
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
       
@@ -214,6 +220,161 @@
       $logger->trace("Exit");
    }
 
+   
+   function writeRequestFromWebHeader($theFileHandler){
+      global $logger;
+      $logger->trace("Enter");
+      $text = "<?php\n";
+      $text .= "   /**\n";
+      $text .= "    * File used for receive the request from the web and map the request params\n";
+      
+      $text .= "    * in functions\n";
+      $text .= "    */\n\n";
+      $text .= "   /****************** INCLUDES ******************************/\n";
+      $text .= "   set_include_path( get_include_path() . PATH_SEPARATOR . \$_SERVER['DOCUMENT_ROOT'].\n";
+      $text .= "                      '/controlpanel/Cursos/php');\n";
+      $text .= "\n";
+      $text .= "   include_once 'LoggerMgr/LoggerMgr.php';\n";
+      fwrite($theFileHandler, $text);
+      $logger->trace("Exit");
+   }
+   
+   function writeRequestFromWebIncludes($theFileHandler, $theTablesDefinition){
+      global $logger;
+      $logger->trace("Enter");
+      $text = "";
+      
+      foreach ($theTablesDefinition as $tableDefinition){
+     
+         $text .= "   include_once 'Database/".$tableDefinition->name.".php';\n";
+      }
+      fwrite($theFileHandler, $text);
+      $logger->trace("Exit");
+   }
+   
+   function writeRequestFromWebConstants($theFileHandler){
+      global $logger;
+      $logger->trace("Enter");
+      $text = "\n";
+      $text .= "   /*** Definition of the global variables and constants ***/\n";
+      $text .= "   /**\n";
+      $text .= "    * Object for write the log in a file\n";
+      $text .= "    */\n";
+      $text .= "\n";
+      $text .= "   \$logger = null;\n";
+      $text .= "\n";
+      $text .= "   \$COMMAND = \"command\";\n";
+      $text .= "   \$PARAMS = \"paramsCommand\";\n";
+      $text .= "   \$PARAM_TABLE = \"Table\";\n";
+      $text .= "   \$PARAM_ROWS = \"rows\";\n";
+      $text .= "   \$COMMAND_UPDATE = \"U\";\n";
+      $text .= "   \$PARAM_KEY = \"key\";\n";
+      $text .= "\n";
+      $text .= "\n";
+      $text .= "   /****************** Functions *****************************/\n\n";
+      
+      fwrite($theFileHandler, $text);
+      $logger->trace("Exit");
+   }
+      
+   function writeRequestFromWebFunctionGetTable($theFileHandler, $theTablesDefinition){
+      global $logger;
+      $logger->trace("Enter");
+      $text = "   function getTable(\$theTableName){\n";
+      $text .= "      global \$logger;\n";
+      $text .= "      \$logger->trace(\"Enter\");\n";
+      $text .= "      \$logger->trace(\"Create object [ \$theTableName ]\");\n";
+      $text .= "      \$returnedTable = null;\n";
+      
+      foreach ($theTablesDefinition as  $tableDefinition){
+         $text .= "\n";
+         $text .= "      if (strcmp(\$theTableName, ". $tableDefinition->name .
+                                "::" . $tableDefinition->name .
+                                "TableC) == 0){\n";
+         $text .= "         \$returnedTable = new ". $tableDefinition->name ."();\n";
+         $text .= "      }\n";
+      }
+      
+      $text .= "      \$logger->trace(\"Exit\");\n";
+      $text .= "      return  \$returnedTable;\n";
+      $text .= "   }\n\n";
+      fwrite($theFileHandler, $text);
+      $logger->trace("Exit");
+   }
+   
+   function writeRequestFromWebFunctionUpdateData($theFileHandler, $theTablesDefinition){
+      global $logger;
+      $logger->trace("Enter");
+      $text = "   function updateData(\$theTable, \$theRows){\n";
+      $text .= "      global \$logger;\n";
+      $text .= "      global \$PARAM_KEY;\n\n";
+      $text .= "      \$logger->trace(\"Enter\");\n";
+      $text .= "      \$logger->trace(\"Rows: [ \".json_encode(\$theRows).\" ]\");\n";
+      $text .= "      \$logger->trace(\"Update data of [ \" . \$theTable->getName() .\" ]\");\n";
+      $text .= "      foreach ( \$theRows as \$row){\n";
+      $text .= "         \$key = \$row[\$PARAM_KEY];\n";
+      $text .= "         \$logger->trace(\"Search by [ \$key ]\");\n";
+      $text .= "         if ( \$theTable->searchByKey(\$key)){\n";
+      $text .= "            \$logger->trace(\"The Key has been found.\");\n";
+      $logger->trace("number of tables: " . count($theTablesDefinition));
+      foreach ($theTablesDefinition as $tableDefinition){
+         
+         $text .="            if (strcmp(\$theTable->getName(),".
+                                      $tableDefinition->name."::".
+                                      $tableDefinition->name."TableC) == 0){\n";
+         $logger->trace("number of colummns: " . count($tableDefinition->column));
+         foreach ($tableDefinition->column as $column){
+            if (strcmp($column->name, $tableDefinition->key->column) != 0){
+               $text .= "               if (isset(\$row[". $tableDefinition->name."::". 
+                                     $column->name . "ColumnC])){\n";
+               $text .= "                  \$logger->trace(\"Set value to column [ \".".
+                               "\n                             ".$tableDefinition->name."::".
+                                            $column->name . "ColumnC .\" ] -> [ " .
+                                            "\".\n".
+                                "                             \$row[". $tableDefinition->name."::".
+                                            $column->name . "ColumnC] .\" ]\");\n";
+               $text .= "                  \$theTable->set" .$column->name . 
+                                          "(\$row[". $tableDefinition->name."::". 
+                                          $column->name . "ColumnC ]);\n";
+               $text .= "                }\n";
+            }
+         }
+         $text .="            }\n\n";
+         $text .= "         \$logger->trace(\"Update the data in the database\");\n";
+         $text .= "         \$theTable->updateRow();\n";
+          
+      }
+      $text .= "         }else{\n";
+      $text .= "            \$logger->trace(\"The Key has not been found.\");\n";
+      $text .= "         }\n";
+       $text .= "      }\n";
+      
+      
+      $text .= "   }\n\n";
+      fwrite($theFileHandler, $text);
+      $logger->trace("Exit");
+   }
+   
+   function writeRequestFromWebMain($theFileHandler){
+      global $logger;
+      $logger->trace("Enter");
+      $handle = fopen("RequestFromWebMainTemplate.txt", "r");
+      $newLine ="";
+      if ($handle) {
+         while (($readedLine = fgets($handle)) !== false) {
+            // process the line read.
+      
+            $newLine.= $readedLine;
+             
+         }
+      } else {
+         // error opening the file.
+      }
+      fclose($handle);
+      fwrite($theFileHandler, $newLine);
+      $logger->trace("Exit");
+   }
+   
 /**************** MAIN *********************/
    
    print("Starting ...\n");
@@ -226,10 +387,12 @@
    $definitions = simplexml_load_file($file);
    
    $logger->info("Read the database tables definition");
-   $logger->debug("The file contains ".count($definitions->table_definition)." table definitions.");
+   $logger->info("The file contains ".count($definitions->table_definition)." table definitions.");
+   $logger->info("Write the tables files");
    for ($idx = 0; $idx < count($definitions->table_definition); $idx++){
+      
       $fileName = $outDir.$definitions->table_definition[$idx]->name.".php";
-      $logger->trace("Writing file: $fileName");
+      $logger->debug("Writing file: $fileName");
       
       $fileHandler = fopen($fileName, "w");
       
@@ -249,13 +412,24 @@
       writeMethodsGetSet($fileHandler, $definitions->table_definition[$idx]->column,
                          $definitions->table_definition[$idx]->key);
       
-      closeClassDefinition($fileHandler);
+      closeClassDefinition($fileHandler,  $definitions->table_definition[$idx]->name);
       fflush($fileHandler);
       
       $logger->debug("Closing the file $fileName");
       fclose($fileHandler);
+      
+     
+      
    }
-   
-   
+   $logger->info("Write the file RequestFromWeb.php");
+   $fileHandler = fopen($outDir."RequestFromWeb.php", "w");
+   writeRequestFromWebHeader($fileHandler);
+   writeRequestFromWebIncludes($fileHandler, $definitions->table_definition);
+   writeRequestFromWebConstants($fileHandler);
+   writeRequestFromWebFunctionGetTable($fileHandler, $definitions->table_definition);
+   writeRequestFromWebFunctionUpdateData($fileHandler, $definitions->table_definition);
+   writeRequestFromWebMain($fileHandler);
+   fflush($fileHandler);
+   $logger->debug("Close RequestFromWeb.php");
    print("... end\n");
 ?>
