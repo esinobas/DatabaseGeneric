@@ -82,5 +82,7 @@
        * @return A integer with the number of rows which the table has.
        */
       public function getCardinality();
+      
+      
    }
 ?>

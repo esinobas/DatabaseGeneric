@@ -103,10 +103,11 @@
        */
       public function getColumns($theTable){
          
+         $this->loggerM->trace("Exit");
          $this->loggerM->trace("Get columns of the table [ ".
               $theTable . " ] that has [ " . 
            count($this->phisicalTablesM[$theTable]->getColumns()) . " ]");
-         $this->loggerM->trace("Enter");
+         $this->loggerM->trace("Exit");
          return  $this->phisicalTablesM[$theTable]->getColumns();
       }
       

@@ -12,6 +12,7 @@
    
    class GenericTable implements TableIf{
       
+      
       /**************** Properties **************/
       /**
        * 
@@ -258,6 +259,9 @@
          $this->loggerM->trace("Exit");
          return count($this->tableDataM);
          
-      } 
+      }
+      
+      
+      
    }
 ?>
