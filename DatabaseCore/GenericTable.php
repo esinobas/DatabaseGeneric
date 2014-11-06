@@ -33,6 +33,16 @@
       private $tableDataM = array();
       
       /**
+       * 
+       * @var array. Array used like backup of the table data when the the 
+       * methods searchByColumn or searchByKey has been executed and the 
+       * $tableDataM is modified due to that reason.
+       * When a commando like insert or update or delete is called, the next
+       * action is merge the current data table with the backup
+       */
+      private $backupTableDataM = null;
+      
+      /**
        * Property where the table definition is saved.
        * @var TableDef
        */
@@ -64,6 +74,22 @@
       }
       
      
+      private function mergeTableData(){
+         
+         $this->loggerM->trace("Enter");
+         $keys = array_keys($this->tableDataM);
+         foreach ($keys as $key){
+            $newData = $this->tableDataM[$key];
+            $this->backupTableDataM[$key] = $newData;
+            
+         }
+         unset($this->tableDataM);
+         $this->tableDataM =  $this->backupTableDataM;
+         unset($this->backupTableDataM);
+         $this->backupTableDataM = null;
+         $this->rowIdxM = -1;
+         $this->loggerM->trace("Exit");
+      }
       
       /**
        * Open the table. Load the table date from database into memory
@@ -156,7 +182,7 @@
       public function update(){
          $this->loggerM->trace("Enter");
          DatabaseMgr::updateTable($this->tableMappingM, $this->tableDataM);
-         $this->refresh();
+         $this->mergeTableData();
          $this->loggerM->trace("Exit");
       }
       
@@ -167,7 +193,7 @@
       public function updateRow(){
          $this->loggerM->trace("Enter");
          DatabaseMgr::updateTable($this->tableMappingM, array(current($this->tableDataM)));
-         $this->refresh();
+         $this->mergeTableData();
          $this->loggerM->trace("Exit");
       }
       
@@ -239,6 +265,7 @@
          $resultArray = array_filter($this->tableDataM, $callbackSearchByColumn);
          $this->loggerM->trace("The search has had [ ". count ($resultArray) ." ]");
          if ( count ($resultArray) > 0){
+            $this->backupTableDataM = $this->tableDataM;
             unset($this->tableDataM);
             $this->tableDataM = $resultArray;
             $this->rowIdxM = -1;
