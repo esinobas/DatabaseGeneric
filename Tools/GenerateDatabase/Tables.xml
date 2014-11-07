@@ -14,6 +14,10 @@
       <name>Description</name>
       <type>string</type>
    </column>
+   <column>
+      <name>Label</name>
+      <type>string</type>
+   </column>
    <key>
       <column>Property</column>
    </key>
@@ -37,10 +41,16 @@
                <logical>Description</logical>
                <type>string</type>
 	    </column>
+	    <column>
+               <name>Label</name>
+               <logical>Label</logical>
+               <type>string</type>
+       </column>
          </columns>
          <key>Property</key>
       </table>
    </phisical_tables>
+   
 </table_definition>
 
 !-- Mapping definitions --!
