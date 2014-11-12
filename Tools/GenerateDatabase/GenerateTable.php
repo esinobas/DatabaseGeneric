@@ -14,8 +14,8 @@
    function closeClassDefinition($theFileHandler, $theClassName){
       global $logger;
       $logger->trace("Enter");
-      $logger->trace("Write getName method for the class [ $theClassName ]");
-      $text = "\n      public function getName(){\n";
+      $logger->trace("Write getTableName method for the class [ $theClassName ]");
+      $text = "\n      public function getTableName(){\n";
       $text .= "         \$this->loggerM->trace(\"Enter / Exit\");\n";
       $text .= "         return self::".$theClassName."TableC;\n";
       $text .= "      }\n";
@@ -64,13 +64,16 @@
    
    function getColumnType($theType){
       
-      if ($theType == "string"){
+      if (strtoupper($theType) == "STRING"){
          return "ColumnType::stringC";
+      }
+      if (strtoupper($theType) == "INTEGER"){
+         return "ColumnType::integerC";
       }
    }
    
    function writeConstructor($theFileHandler, $theClassName, $theColumns, $theKey,
-         $thePhisicalDef){
+                              $thePhisicalDef){
       global $logger;
    
       $logger->trace("Enter");
@@ -114,6 +117,7 @@
                $logger->trace("Data type is [ ColumnType::stringC ]" );
                $columnType = "ColumnType::stringC";
             }
+            $columnType = getColumnType($columns[$idxColumns]->type);
             $text .= "      \$this->tableMappingM->addColumn(\n            self::phisical".
                   $tables[$idx]->name."C ,\n            self::phisical".
                   $columns[$idxColumns]->name."ColumnC ,\n            self::".
@@ -121,11 +125,21 @@
                   $columnType . ");\n";
    
          }
-         $logger->trace("Add the table key [ " . $tables[$idx]->key . " ]");
-         $text .= "      \n";
-         $text .= "      \$this->tableMappingM->addKey(self::phisical".
+         if (isset($tables[$idx]->key)){
+            $logger->trace("Add the table key [ " . $tables[$idx]->key . " ]");
+            $text .= "      \n";
+            $text .= "      \$this->tableMappingM->addKey(self::phisical".
                                $tables[$idx]->name."C,\n            self::phisical".
                                $tables[$idx]->key."ColumnC );\n";
+         }
+         
+      }
+      $logger->trace("Add the conditions");
+      $conditions = $thePhisicalDef->conditions;
+      foreach ($conditions as $condition){
+         $logger->trace("Add Condition [ $condition->condition ]");
+         $text .= "\n";
+         $text .= "      \$this->tableMappingM->addCondition(\"$condition->condition\");\n";
       }
       $text .= "      \n";
       $text .= "      \$this->loggerM->trace(\"Exit\");\n";
@@ -310,7 +324,7 @@
       $text .= "      global \$PARAM_KEY;\n\n";
       $text .= "      \$logger->trace(\"Enter\");\n";
       $text .= "      \$logger->trace(\"Rows: [ \".json_encode(\$theRows).\" ]\");\n";
-      $text .= "      \$logger->trace(\"Update data of [ \" . \$theTable->getName() .\" ]\");\n";
+      $text .= "      \$logger->trace(\"Update data of [ \" . \$theTable->getTableName() .\" ]\");\n";
       $text .= "      foreach ( \$theRows as \$row){\n";
       $text .= "         \$key = \$row[\$PARAM_KEY];\n";
       $text .= "         \$logger->trace(\"Search by [ \$key ]\");\n";
@@ -319,7 +333,7 @@
       $logger->trace("number of tables: " . count($theTablesDefinition));
       foreach ($theTablesDefinition as $tableDefinition){
          
-         $text .="            if (strcmp(\$theTable->getName(),".
+         $text .="            if (strcmp(\$theTable->getTableName(),".
                                       $tableDefinition->name."::".
                                       $tableDefinition->name."TableC) == 0){\n";
          $logger->trace("number of colummns: " . count($tableDefinition->column));

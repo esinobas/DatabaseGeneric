@@ -144,5 +144,15 @@
          $this->loggerM->trace("Enter/Exit");
          return $this->phisicalTablesM[$theTable];
       }
+      
+      /**
+       * Returns the conditions that must comply the query for select the data
+       * @return Array with the conditions in sql format.
+       */
+      public function getConditions(){
+         
+         $this->loggerM->trace("Enter/Exit");
+         return $this->conditionsM;
+      }
    }
 ?>

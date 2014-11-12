@@ -68,16 +68,28 @@
             for ($x = 0; $x < count($columns); $x++){
                $logger->trace("Column Name [ $x ] -> [ " . $columnsKey[$x] . " ]");
                if ($isFirstColum){
-                  $sqlColumns .= $columnsKey[$x];
+                  $sqlColumns .= $tablesName[$i].".".$columnsKey[$x];
                   $isFirstColum = false;
                }else{
-                  $sqlColumns .= ", ".$columnsKey[$x];
+                  $sqlColumns .= ", ".$tablesName[$i].".".$columnsKey[$x];
                }
             }
          }
          
-         $logger->trace("Get conditions from table mapping. It is not implemented");
+         
          $sqlSelect .= $sqlColumns . " from " . $sqlTables;
+         $logger->trace("Get conditions from table mapping. There is/are [ " .
+                    count($theTableMapping->getConditions()) ." ] conditions");
+         $isFirst = true;
+         foreach ($theTableMapping->getConditions() as $condition){
+            $logger->trace("Condition [ $condition ]");
+            if ($isFirst){
+               $isFirst = false;
+               $sqlSelect .= " where " . $condition;
+            }else{
+               $sqlSelect .= " and " . $condition;
+            }
+         }
          $logger->debug($sqlSelect);
          $logger->trace("Exit");
          return $sqlSelect;

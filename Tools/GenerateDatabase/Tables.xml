@@ -53,6 +53,116 @@
    
 </table_definition>
 
+<table_definition>
+   <name>TB_Level</name>
+   <column>
+      <name>Id</name>
+      <type>integer</type>
+   </column>
+   <column>
+      <name>Level</name>
+      <type>string</type>
+   </column>
+   <key>
+      <column>Id</column>
+   </key>
+   <!--  Phisical Mapping -->
+   <phisical_tables>
+      <table>
+         <name>TB_Level</name>
+         <columns>
+            <column>
+               <name>Id</name>
+               <logical>Id</logical>
+               <type>integer</type>
+            </column>
+            <column>
+               <name>Level</name>
+               <logical>Level</logical>
+               <type>string</type>
+            </column>
+         </columns>
+         <key>Id</key>
+      </table>
+   </phisical_tables>
+   
+</table_definition>
 !-- Mapping definitions --!
 
+<table_definition>
+   <name>TB_Curso</name>
+   <column>
+      <name>Id</name>
+      <type>integer</type>
+   </column>
+   <column>
+      <name>Name</name>
+      <type>string</type></column>
+   <column>
+      <name>Description</name>
+      <type>string</type>
+   </column>
+   <column>
+      <name>Image</name>
+      <type>string</type>
+   </column>
+   <column>
+      <name>Duration</name>
+      <type>integer</type>
+   </column>
+   <column>
+      <name>Level</name>
+      <type>string</type>
+   </column>
+   <key>
+      <column>Id</column>
+   </key>
+    <!--  Phisical Mapping -->
+   <phisical_tables>
+      <table>
+         <name>TB_Level</name>
+         <columns>
+              <column>
+               <name>Level</name>
+               <logical>Level</logical>
+               <type>string</type>
+            </column>
+         </columns>
+      </table>
+      <table>
+         <name>TB_Curso</name>
+         <columns>
+            <column>
+               <name>Id</name>
+               <logical>Id</logical>
+               <type>integer</type>
+            </column> 
+            <column>
+               <name>Name</name>
+               <logical>Name</logical>
+               <type>string</type>
+            </column>
+             <column>
+               <name>Description</name>
+               <logical>Description</logical>
+               <type>string</type>
+            </column>
+             <column>
+               <name>Image</name>
+               <logical>Image</logical>
+               <type>string</type>
+            </column>
+             <column>
+               <name>Duration</name>
+               <logical>Duration</logical>
+               <type>integer</type>
+            </column>
+         </columns>
+         <key>Id</key>
+      </table>
+      <conditions>
+         <condition>TB_Curso.Level = TB_Level.Id</condition>
+      </conditions>
+   </phisical_tables>
+</table_definition>
 </Database>
