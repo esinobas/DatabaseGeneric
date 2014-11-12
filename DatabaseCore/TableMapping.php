@@ -134,6 +134,11 @@
          
       }
       
+       public function getKey($theTable){
+          $this->loggerM->trace("Enter/Exit");
+          return $this->phisicalTablesM[$theTable]->getKey();
+       }
+      
       /**
        * Returns the phisical table definition
        * @param string $theTable

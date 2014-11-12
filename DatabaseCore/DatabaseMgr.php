@@ -357,7 +357,8 @@
        */
       static public function insert(TableMapping $theTableMapping,
                                     array $theNewData,
-                                    array &$theReturnData){
+                                    array &$theReturnData,
+                                    $theColumnKey){
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
          $logger->trace("Enter");
          $result = true;
@@ -365,14 +366,40 @@
          if ($database->connect(false)){
             $logger->debug("The connection with the database was established successfull");
             foreach ($theTableMapping->getTables() as $table){
-               $sqlInsert = self::createSqlInsert($table, $theNewData);
-               $logger->debug("Execute command [ $sqlInsert ]");
-               if ($database->sqlCommand($sqlInsert) == 0){
-                  $logger->trace("Command executed successful");
+               if ($table->getKey()!=null){
+                  $logger->trace("The table [ " .$table->getName()." ] has key");
+                  $sqlInsert = self::createSqlInsert($table, $theNewData);
+                  $logger->debug("Execute command [ $sqlInsert ]");
+                  if ($database->sqlCommand($sqlInsert) == 0){
+                     $logger->trace("Command executed successful");
+                     $logger->trace("The column key [ $theColumnKey ] will be ".
+                           "set to [ ".$database->getLastId() ." ]");
+                     $idx = count($theReturnData);
+                     $theReturnData[$idx] = array();
+                     $theReturnData[$idx][$theColumnKey] = $database->getLastId();
+                     $keys = array_keys($theNewData);
+                     foreach ($keys as $key){
+                        $logger->trace("Add new data [ $theNewData[$key] ] in column [ $key ]");
+                        $theReturnData[$idx][$key] = $theNewData[$key];
+                     }
+                  }else{
+                     $logger->error("The command [ $sqlInsert] fails. Error [" .
+                           $database->getSqlError() ." ]");
+                     $result = false;
+                     break;
+                  }
                }else{
-                  
+                  $logger->trace("The table [ ". $table->getName(). " ] has not key. Skip table");
                }
+               
             }
+            if ($result){
+               $database->commit();
+            }else{
+               $database->rollback();
+            }
+            
+            $database->closeConnection();
          }else{
             $error = $database->getConnectError();
             $logger->error("An error has been produced in connect [ $error ]");

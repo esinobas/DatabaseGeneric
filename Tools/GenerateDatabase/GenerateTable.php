@@ -120,7 +120,7 @@
             $columnType = getColumnType($columns[$idxColumns]->type);
             $text .= "      \$this->tableMappingM->addColumn(\n            self::phisical".
                   $tables[$idx]->name."C ,\n            self::phisical".
-                  $columns[$idxColumns]->name."ColumnC ,\n            self::".
+                  $tables[$idx]->name.$columns[$idxColumns]->name."ColumnC ,\n            self::".
                   $columns[$idxColumns]->logical ."ColumnC,\n            " .
                   $columnType . ");\n";
    
@@ -130,7 +130,7 @@
             $text .= "      \n";
             $text .= "      \$this->tableMappingM->addKey(self::phisical".
                                $tables[$idx]->name."C,\n            self::phisical".
-                               $tables[$idx]->key."ColumnC );\n";
+                               $tables[$idx]->name.$tables[$idx]->key."ColumnC );\n";
          }
          
       }
@@ -195,7 +195,7 @@
          for ($idxColumns = 0; $idxColumns < count($columns); $idxColumns++){
             $logger->debug("Phisical column name: ".$columns[$idxColumns]->name);
          
-            $text .= "      const phisical".$columns[$idxColumns]->name."ColumnC = \"".
+            $text .= "      const phisical".$tables[$idx]->name.$columns[$idxColumns]->name."ColumnC = \"".
                       $columns[$idxColumns]->name."\";\n";
          }
          $text .= "\n";

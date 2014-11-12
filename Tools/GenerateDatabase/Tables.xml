@@ -127,11 +127,6 @@
          <name>TB_Level</name>
          <columns>
             <column>
-               <name>Id</name>
-               <logical>LevelId</logical>
-               <type>integer</type>
-             </column>
-              <column>
                <name>Level</name>
                <logical>Level</logical>
                <type>string</type>
@@ -166,11 +161,16 @@
                <logical>Duration</logical>
                <type>integer</type>
             </column>
+            <column>
+               <name>Level_Id</name>
+               <logical>LevelId</logical>
+               <type>integer</type>
+             </column>
          </columns>
          <key>Id</key>
       </table>
       <conditions>
-         <condition>TB_Curso.Level = TB_Level.Id</condition>
+         <condition>TB_Curso.Level_Id = TB_Level.Id</condition>
       </conditions>
    </phisical_tables>
 </table_definition>
