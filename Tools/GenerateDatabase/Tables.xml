@@ -111,6 +111,10 @@
       <type>integer</type>
    </column>
    <column>
+      <name>LevelId</name>
+      <type>integer</type>
+   </column>
+   <column>
       <name>Level</name>
       <type>string</type>
    </column>
@@ -122,6 +126,11 @@
       <table>
          <name>TB_Level</name>
          <columns>
+            <column>
+               <name>Id</name>
+               <logical>LevelId</logical>
+               <type>integer</type>
+             </column>
               <column>
                <name>Level</name>
                <logical>Level</logical>
