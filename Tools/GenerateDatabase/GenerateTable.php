@@ -354,10 +354,11 @@
             }
          }
          $text .="            }\n\n";
-         $text .= "         \$logger->trace(\"Update the data in the database\");\n";
-         $text .= "         \$theTable->updateRow();\n";
-          
+         
       }
+      $text .= "            \$logger->trace(\"Update the data in the database\");\n";
+      $text .= "            \$theTable->updateRow();\n";
+      
       $text .= "         }else{\n";
       $text .= "            \$logger->trace(\"The Key has not been found.\");\n";
       $text .= "         }\n";
