@@ -22,7 +22,7 @@
          $table->open();
       
          if (strcmp(strtoupper($strCommand), $COMMAND_UPDATE) == 0){
-            $logger->debug("It is a update command in table [ ". $table->getName() . " ]");
+            $logger->debug("It is a update command in table [ ". $table->getTableName() . " ]");
             updateData($table, $params[$PARAM_ROWS]);
          }
 
