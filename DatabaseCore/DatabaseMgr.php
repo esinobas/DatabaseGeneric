@@ -17,22 +17,34 @@
       
       const modifiedRowC ="ColumnModifiedRow";
       
+      static private $databaseM = null;
+      
       /**
        * Create a database object with the parameters saved in the config file
        * @return MySqlDatabase
        */
-      static private function getDatabase(){
+      static private function getDatabase($theAutoCommit = true){
          
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
          $logger->trace("Enter");
          // Now only is used MySql. In a futher a factory should be created
+         if (self::$databaseM == null){
          
-         $logger->debug("Create database with data within [ " . self::DatabaseConfigC ." ]");
+            $logger->debug("Create database with data within [ " . self::DatabaseConfigC ." ]");
          
-         $database = new MySqlDatabase(self::DatabaseConfigC);
+            self::$databaseM = new MySqlDatabase(self::DatabaseConfigC);
+            if (self::$databaseM->connect($theAutoCommit)){
+               $logger->debug("The connection with the database was established successfull");
+            }else{
+               $error = self::$databaseM->getConnectError();
+               $logger->error("An error has been produced in connect with database. Error [ $error ]");
+               self::$databaseM = null;
+            }
+            
+         }
          
          $logger->trace("Exit");
-         return $database;
+         return self::$databaseM;
       }
       
       /**
@@ -106,10 +118,11 @@
          
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
          $logger->trace("Enter");
-         $sqlSelect = self::createSqlSelect($theTableMapping);
+         
          $database = self::getDatabase();
-         if ($database->connect()){
-            $logger->debug("The connection with the database was established successfull");
+         if ($database != null){
+            //$logger->debug("The connection with the database was established successfull");
+            $sqlSelect = self::createSqlSelect($theTableMapping);
             
             $logger->debug("Execute query [ $sqlSelect ]");
             $resultQuery = $database->query($sqlSelect);
@@ -135,10 +148,9 @@
                
             }
             
-            $database->closeConnection();
          }else{
-            $error = $database->getConnectError();
-            $logger->error("An error has been produced in connect [ $error ]");
+            
+            $logger->warn("The table can not be opened");
          }
          
          $logger->trace("Exit");
@@ -203,6 +215,7 @@
       static public function updateTable(TableMapping $theTableMapping,
                                           array $theTableData){
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
+         $result = false;
          $logger->trace("Enter");
          $logger->trace("Filter the modified rows. The table has [ ".
                   count($theTableData) . " ] rows before the filter" );
@@ -217,9 +230,9 @@
             $logger->trace("Exit");
             return;
          }
-         $database = self::getDatabase();
-         if ( $database->connect(false)){
-            $logger->debug("The connection with the database was established successfull");
+         $database = self::getDatabase(false);
+         if ( $database != null){
+            //$logger->debug("The connection with the database was established successfull");
             $tables = $theTableMapping->getTables();
             $error = false;
             for ($i = 0; $i < count($arrayModifiedRows); $i++){
@@ -238,20 +251,22 @@
                   $logger->error("A error has produced [ " . 
                              $database->getSqlError() . " ]");
                   $error = true;
+                  $result = false;
                }
             }
             if (! $error ){
                $logger->trace("The commit is executed");
                $database->commit();
             }
-            $database->closeConnection();
+            
          }else{
             
-            $error = $database->getConnectError();
-            $logger->error("An error has been produced in connect [ $error ]");
+            $logger->warn("The table can not be updated");
+            $result = false;
             
          }
          $logger->trace("Exit");
+         return $result;
       }
       
       /**
@@ -362,9 +377,9 @@
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
          $logger->trace("Enter");
          $result = true;
-         $database = self::getDatabase();
-         if ($database->connect(false)){
-            $logger->debug("The connection with the database was established successfull");
+         $database = self::getDatabase(false);
+         if ($database != null){
+            //$logger->debug("The connection with the database was established successfull");
             foreach ($theTableMapping->getTables() as $table){
                if ($table->getKey()!=null){
                   $logger->trace("The table [ " .$table->getName()." ] has key");
@@ -399,14 +414,31 @@
                $database->rollback();
             }
             
-            $database->closeConnection();
+            
          }else{
-            $error = $database->getConnectError();
-            $logger->error("An error has been produced in connect [ $error ]");
+            $logger->warn("The row has not could be inserted");
             $result = false;
          }
          $logger->trace("Exit");
          return $result;
+      }
+      
+      static public function closeConnection(){
+         $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
+         $logger->trace("Enter");
+         if (self::$databaseM != null){
+            if (self::$databaseM->isConnected()){
+               $logger->trace("The connection is closing");
+               self::$databaseM->closeConnection();
+               
+            }else{
+               $logger->trace("The connection is already close");
+            }
+            self::$databaseM = null;
+         }else{
+            $logger->trace("The connection doesn't exist");
+         }
+         $logger->trace("Exit");
       }
    }
 

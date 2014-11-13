@@ -73,6 +73,12 @@
          $this->loggerM->trace("Exit");
       }
       
+      public function __destruct(){
+         $this->loggerM->trace("Enter");
+         DatabaseMgr::closeConnection();
+         $this->loggerM->trace("Exit");
+      }
+      
      
       private function mergeTableData(){
          
