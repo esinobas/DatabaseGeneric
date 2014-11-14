@@ -111,6 +111,10 @@
       <type>integer</type>
    </column>
    <column>
+      <name>Price</name>
+      <type>float</type>
+   </column>
+   <column>
       <name>LevelId</name>
       <type>integer</type>
    </column>
@@ -160,6 +164,11 @@
                <name>Duration</name>
                <logical>Duration</logical>
                <type>integer</type>
+            </column>
+            <column>
+               <name>Price</name>
+               <logical>Price</logical>
+               <type>float</type>
             </column>
             <column>
                <name>Level_Id</name>

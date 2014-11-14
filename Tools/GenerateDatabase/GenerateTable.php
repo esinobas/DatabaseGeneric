@@ -70,6 +70,9 @@
       if (strtoupper($theType) == "INTEGER"){
          return "ColumnType::integerC";
       }
+      if (strtoupper($theType) == "FLOAT"){
+         return "ColumnType::floatC";
+      }
    }
    
    function writeConstructor($theFileHandler, $theClassName, $theColumns, $theKey,
