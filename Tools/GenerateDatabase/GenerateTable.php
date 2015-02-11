@@ -284,6 +284,8 @@
       $text .= "   \$PARAMS = \"paramsCommand\";\n";
       $text .= "   \$PARAM_TABLE = \"Table\";\n";
       $text .= "   \$PARAM_ROWS = \"rows\";\n";
+      $text .= "   \$PARAM_DATA = \"data\";\n";
+      $text .= "   \$COMMAND_INSERT = \"I\";\n";
       $text .= "   \$COMMAND_UPDATE = \"U\";\n";
       $text .= "   \$PARAM_KEY = \"key\";\n";
       $text .= "\n";
@@ -373,6 +375,43 @@
       $logger->trace("Exit");
    }
    
+   function writeRequestFromWebFunctionInsertData($theFileHandler, $theTablesDefinition){
+      global $logger;
+      $logger->trace("Enter");
+      $text = "   function insertData(\$theTable, \$theData){\n";
+      $text .= "      global \$logger;\n";
+      $text .= "      \$logger->trace(\"Enter\");\n";
+      $text .= "      \$logger->trace(\"Insert data: [ \".json_encode(\$theData).\" ]\");\n";
+      $text .= "      \$logger->trace(\"Into [ \" . \$theTable->getTableName() .\" ]\");\n";
+      $logger->trace("number of tables: " . count($theTablesDefinition));
+      foreach ($theTablesDefinition as $tableDefinition){
+         $text .="            if (strcmp(\$theTable->getTableName(),".
+               $tableDefinition->name."::".
+               $tableDefinition->name."TableC) == 0){\n";
+         $logger->trace("The table [ ". $tableDefinition->name .
+                        " ] has [ " . count($tableDefinition->column).
+                        " ] colummns.");
+         $text .="               //Declare variables\n";
+         $data = "";
+         $logger->trace("Key: " . $tableDefinition->key->column);
+         foreach ($tableDefinition->column as $column){
+            $logger->trace("Column: " . $column->name);
+            if (strcmp($tableDefinition->key->column, $column->name) != 0 ){
+               $text .="               \$var".$column->name . " = \$theData[\"" .
+                                    $column->name . "\"];\n";
+               $data .= "\$var".$column->name."\n                                ,";
+            }
+         }
+         $data = substr($data, 0, strlen($data)-1);
+         $text .= "\n               \$theTable->insert($data);\n";
+         $text .= "            }\n";
+      }
+      $text .= "      \$logger->trace(\"Exit\");\n";
+      $text .= "   }\n\n";
+      fwrite($theFileHandler, $text);
+      $logger->trace("Exit");
+   }
+   
    function writeRequestFromWebMain($theFileHandler){
       global $logger;
       $logger->trace("Enter");
@@ -446,6 +485,7 @@
    writeRequestFromWebConstants($fileHandler);
    writeRequestFromWebFunctionGetTable($fileHandler, $definitions->table_definition);
    writeRequestFromWebFunctionUpdateData($fileHandler, $definitions->table_definition);
+   writeRequestFromWebFunctionInsertData($fileHandler, $definitions->table_definition);
    writeRequestFromWebMain($fileHandler);
    fflush($fileHandler);
    $logger->debug("Close RequestFromWeb.php");

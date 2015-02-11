@@ -29,7 +29,10 @@
             $logger->debug("It is a update command in table [ ". $table->getTableName() . " ]");
             updateData($table, $params[$PARAM_ROWS]);
          }
-
+         if (strcmp(strtoupper($strCommand), $COMMAND_INSERT) == 0){
+            $logger->debug("It is a insert command in table [ ". $table->getTableName() . " ]");
+            insertData($table, $params[$PARAM_DATA]);
+         }
          $logger->trace("The request has been processed");
          $resultArray['ResultCode'] = "OK 200";
          
