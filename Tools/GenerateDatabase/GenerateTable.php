@@ -385,27 +385,34 @@
       $text .= "      \$logger->trace(\"Into [ \" . \$theTable->getTableName() .\" ]\");\n";
       $logger->trace("number of tables: " . count($theTablesDefinition));
       foreach ($theTablesDefinition as $tableDefinition){
-         $text .="            if (strcmp(\$theTable->getTableName(),".
+         $text .="\n      if (strcmp(\$theTable->getTableName(),".
                $tableDefinition->name."::".
                $tableDefinition->name."TableC) == 0){\n";
          $logger->trace("The table [ ". $tableDefinition->name .
                         " ] has [ " . count($tableDefinition->column).
                         " ] colummns.");
-         $text .="               //Declare variables\n";
+         $text .="\n         //Declare variables\n";
          $data = "";
          $logger->trace("Key: " . $tableDefinition->key->column);
          foreach ($tableDefinition->column as $column){
             $logger->trace("Column: " . $column->name);
             if (strcmp($tableDefinition->key->column, $column->name) != 0 ){
-               $text .="               \$var".$column->name . " = \$theData[\"" .
+               $text .="         \$var".$column->name . " = \$theData[\"" .
                                     $column->name . "\"];\n";
                $data .= "\$var".$column->name."\n                                ,";
             }
          }
          $data = substr($data, 0, strlen($data)-1);
-         $text .= "\n               \$theTable->insert($data);\n";
-         $text .= "            }\n";
+         $text .= "\n         \$newId = \$theTable->insert($data);\n";
+         $text .= "      }\n";
       }
+      $text .= "\n      if( \$newId != -1){\n";
+      $text .= "           \$logger->trace(\"The insertion was exectuted successfully. \".\n";
+      $text .= "                           \"The new Id is [ \$newId ]\");\n";
+      $text .= "        }else{\n";
+      $text .= "           \$logger->error(\"The insert failed. \");\n";
+      $text .= "        }\n";
+       
       $text .= "      \$logger->trace(\"Exit\");\n";
       $text .= "   }\n\n";
       fwrite($theFileHandler, $text);
