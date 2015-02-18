@@ -177,16 +177,20 @@
        */
       public function insertData($theDataArray){
          $this->loggerM->trace("Enter");
+         $newId = -1;
          if (DatabaseMgr::insert($this->tableMappingM, $theDataArray, 
                              $this->tableDataM,
-                             $this->tableDefinitionM->getKeys()[0])){
-            $this->loggerM->trace("The data was inserted successfully");
+                             $this->tableDefinitionM->getKeys()[0],
+                             $newId)){
+            $this->loggerM->trace("The data was inserted successfully. ".
+                                  "The new Id is [ $newId ]");
          }else{
             $this->loggerM->error("The data was not inserted");
          }
          $this->rewind();
          
          $this->loggerM->trace("Exit");
+         return $newId;
       }
       
       /**

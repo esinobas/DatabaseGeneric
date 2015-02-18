@@ -368,6 +368,9 @@
        * @param TableMapping $theTableMapping
        * @param array $theNewData
        * @param array $theReturnData
+       * @param string $theColumnKey. 
+       * @param Integer [in|out] $theNewId: It is the id of the new row inserted in
+       * into the table in the database.
        * @return boolean
        */
       static public function insert(TableMapping $theTableMapping,
@@ -392,6 +395,7 @@
                      $idx = count($theReturnData);
                      $theReturnData[$idx] = array();
                      $theReturnData[$idx][$theColumnKey] = $database->getLastId();
+                     $theNewId = $database->getLastId();
                      $keys = array_keys($theNewData);
                      foreach ($keys as $key){
                         $logger->trace("Add new data [ $theNewData[$key] ] in column [ $key ]");
