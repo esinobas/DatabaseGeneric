@@ -376,7 +376,8 @@
       static public function insert(TableMapping $theTableMapping,
                                     array $theNewData,
                                     array &$theReturnData,
-                                    $theColumnKey){
+                                    $theColumnKey,
+                                    $theNewId){
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
          $logger->trace("Enter");
          $result = true;
@@ -443,6 +444,22 @@
             $logger->trace("The connection doesn't exist");
          }
          $logger->trace("Exit");
+      }
+      
+      /**
+       * Functions that returns the error ocurred in a database after a command
+       * @return string
+       */
+      static public function getDatabaseError(){
+         $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
+         $logger->trace("Enter");
+         $strError = "";
+         if (self::$databaseM != null){
+            $strError = self::$databaseM->getSqlError();
+         }
+         $logger->debug("Error returned [ $strError ]");
+         $logger->trace("Exit");
+         return $strError;
       }
    }
 

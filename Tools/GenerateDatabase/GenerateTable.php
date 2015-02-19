@@ -252,6 +252,7 @@
       $text .= "                      '/controlpanel/Cursos/php');\n";
       $text .= "\n";
       $text .= "   include_once 'LoggerMgr/LoggerMgr.php';\n";
+      $text .= "   include_once 'DatabaseCore/DatabaseMgr.php';\n";
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
    }

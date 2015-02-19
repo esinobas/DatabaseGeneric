@@ -83,6 +83,13 @@
        */
       public function getCardinality();
       
-      
+      /**
+       * Returns a string with the error produced in any action with the table.
+       * The method must readed after check the action status and it is not 
+       * success
+       * 
+       * @return A string with the error message
+       */
+      public function getStrError();
    }
 ?>

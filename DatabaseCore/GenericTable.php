@@ -62,6 +62,14 @@
        */
       private $keysM = array();
       
+      /**
+       * Property where is saved the message error when a operation or action
+       * on the table is executed with fail.
+       * 
+       * @var string
+       */
+      private $strErrorM = "";
+      
       /**************** Methods **************/
       /**
        * Constructor of the class. It is protected to avoid it is instanced 
@@ -184,8 +192,11 @@
                              $newId)){
             $this->loggerM->trace("The data was inserted successfully. ".
                                   "The new Id is [ $newId ]");
+            $this->strErrorM = "";
          }else{
-            $this->loggerM->error("The data was not inserted");
+            $this->strErrorM = DatabaseMgr::getDatabaseError();
+            $this->loggerM->error("The data was not inserted [ " .
+                    $this->strErrorM ." ]");
          }
          $this->rewind();
          
@@ -306,7 +317,14 @@
          
       }
       
-      
-      
+      /**
+       * (non-PHPdoc)
+       * @see TableIf::getStrError()
+       */
+      public function getStrError(){
+         $this->loggerM->trace("Enter");
+         $this->loggerM->trace("Exit");
+         return $this->strErrorM;
+      }
    }
 ?>
