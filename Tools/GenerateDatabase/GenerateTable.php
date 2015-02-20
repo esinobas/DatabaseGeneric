@@ -252,7 +252,7 @@
       $text .= "                      '/controlpanel/Cursos/php');\n";
       $text .= "\n";
       $text .= "   include_once 'LoggerMgr/LoggerMgr.php';\n";
-      $text .= "   include_once 'DatabaseCore/DatabaseMgr.php';\n";
+      //$text .= "   include_once 'DatabaseCore/DatabaseMgr.php';\n";
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
    }
@@ -289,6 +289,10 @@
       $text .= "   \$COMMAND_INSERT = \"I\";\n";
       $text .= "   \$COMMAND_UPDATE = \"U\";\n";
       $text .= "   \$PARAM_KEY = \"key\";\n";
+      $text .= "   \$RESULT_CODE = \"ResultCode\";\n";
+      $text .= "   \$MSG_ERROR = \"ErrorMsg\";\n";
+      $text .= "   \$RESULT_CODE_SUCCESS = 200;\n";
+      $text .= "   \$RESULT_CODE_INTERNAL_ERROR = 500;\n";
       $text .= "\n";
       $text .= "\n";
       $text .= "   /****************** Functions *****************************/\n\n";
@@ -325,9 +329,13 @@
    function writeRequestFromWebFunctionUpdateData($theFileHandler, $theTablesDefinition){
       global $logger;
       $logger->trace("Enter");
-      $text = "   function updateData(\$theTable, \$theRows){\n";
+      $text = "   function updateData(\$theTable, \$theRows, &\$theResult){\n";
       $text .= "      global \$logger;\n";
       $text .= "      global \$PARAM_KEY;\n\n";
+      $text .= "      global \$RESULT_CODE;\n";
+      $text .= "      global \$MSG_ERROR;\n";
+      $text .= "      global \$RESULT_CODE_SUCCESS;\n";
+      $text .= "      global \$RESULT_CODE_INTERNAL_ERROR;\n";
       $text .= "      \$logger->trace(\"Enter\");\n";
       $text .= "      \$logger->trace(\"Rows: [ \".json_encode(\$theRows).\" ]\");\n";
       $text .= "      \$logger->trace(\"Update data of [ \" . \$theTable->getTableName() .\" ]\");\n";
@@ -366,7 +374,9 @@
       $text .= "            \$theTable->updateRow();\n";
       
       $text .= "         }else{\n";
-      $text .= "            \$logger->trace(\"The Key has not been found.\");\n";
+      $text .= "            \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
+      $text .= "            \$theResult[\$MSG_ERROR] = \"The Key has not been found.\";\n";
+      $text .= "            \$logger->warn(\$theResult[\$MSG_ERROR]);\n";
       $text .= "         }\n";
        $text .= "      }\n";
       
@@ -379,8 +389,12 @@
    function writeRequestFromWebFunctionInsertData($theFileHandler, $theTablesDefinition){
       global $logger;
       $logger->trace("Enter");
-      $text = "   function insertData(\$theTable, \$theData){\n";
+      $text = "   function insertData(\$theTable, \$theData, &\$theResult){\n";
       $text .= "      global \$logger;\n";
+      $text .= "      global \$RESULT_CODE;\n";
+      $text .= "      global \$MSG_ERROR;\n";
+      $text .= "      global \$RESULT_CODE_SUCCESS;\n";
+      $text .= "      global \$RESULT_CODE_INTERNAL_ERROR;\n";
       $text .= "      \$logger->trace(\"Enter\");\n";
       $text .= "      \$logger->trace(\"Insert data: [ \".json_encode(\$theData).\" ]\");\n";
       $text .= "      \$logger->trace(\"Into [ \" . \$theTable->getTableName() .\" ]\");\n";
@@ -411,7 +425,9 @@
       $text .= "           \$logger->trace(\"The insertion was exectuted successfully. \".\n";
       $text .= "                           \"The new Id is [ \$newId ]\");\n";
       $text .= "        }else{\n";
-      $text .= "           \$logger->error(\"The insert failed. \");\n";
+      $text .= "           \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
+      $text .= "           \$theResult[\$MSG_ERROR] = \$theTable->getStrError();\n";
+      $text .= "           \$logger->error(\"The insert failed. Error [ \" . \$theResult[\$MSG_ERROR] . \" ]\");\n";
       $text .= "        }\n";
        
       $text .= "      \$logger->trace(\"Exit\");\n";

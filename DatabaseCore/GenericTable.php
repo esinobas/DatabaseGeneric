@@ -210,9 +210,17 @@
        */
       public function update(){
          $this->loggerM->trace("Enter");
-         DatabaseMgr::updateTable($this->tableMappingM, $this->tableDataM);
-         $this->mergeTableData();
+         $result = DatabaseMgr::updateTable($this->tableMappingM, $this->tableDataM);
+         if ($result){
+            $this->mergeTableData();
+            $this->strErrorM ="";
+         }else{
+            $this->strErrorM = DatabaseMgr::getDatabaseError();
+            $this->loggerM->error("The row was not updated [ " .
+                  $this->strErrorM ." ]");
+         }
          $this->loggerM->trace("Exit");
+         return $result;
       }
       
       /**
@@ -221,9 +229,17 @@
        */
       public function updateRow(){
          $this->loggerM->trace("Enter");
-         DatabaseMgr::updateTable($this->tableMappingM, array(current($this->tableDataM)));
-         $this->mergeTableData();
+         $result = DatabaseMgr::updateTable($this->tableMappingM, array(current($this->tableDataM)));
+         if ($result){
+            $this->mergeTableData();
+            $this->strErrorM ="";
+         }else{
+            $this->strErrorM = DatabaseMgr::getDatabaseError();
+            $this->loggerM->error("The row was not updated [ " .
+                  $this->strErrorM ." ]");
+         }
          $this->loggerM->trace("Exit");
+         return $result;
       }
       
       protected function get($theColumn){

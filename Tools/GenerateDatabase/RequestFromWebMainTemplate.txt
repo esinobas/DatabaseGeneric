@@ -9,13 +9,14 @@
       $logger->info("A request has been received from web");
       $resultArray = array();
       if (!isset ($_POST[$COMMAND]) || ! isset ($_POST[$PARAMS])){
-         $resultArray['ResultCode'] = "ERROR 500";
-         $resultArray['MsgError'] = "Unmatched format request. Absence of param $COMMAND or $PARAMS";
+         $resultArray[$RESULT_CODE] = $RESULT_CODE_INTERNAL_ERROR;
+         $resultArray[$MSG_ERROR] = "Unmatched format request. Absence of param $COMMAND or $PARAMS";
          $logger->error(json_encode($resultArray));
          //$logger->error("Unmatched format request. Absence of param $COMMAND or $PARAMS");
             //print("ERROR 500. Unmatched format request. Absence of param $COMMAND or $PARAMS");
          
       }else{
+         $resultArray[$RESULT_CODE] = $RESULT_CODE_SUCCESS;
          $strCommand = $_POST[$COMMAND];
          $strParams = $_POST[$PARAMS];
          $logger->trace("The command is [ $strCommand ] and the params are [ $strParams ]");
@@ -27,15 +28,14 @@
       
          if (strcmp(strtoupper($strCommand), $COMMAND_UPDATE) == 0){
             $logger->debug("It is a update command in table [ ". $table->getTableName() . " ]");
-            updateData($table, $params[$PARAM_ROWS]);
+            updateData($table, $params[$PARAM_ROWS],$resultArray);
          }
          if (strcmp(strtoupper($strCommand), $COMMAND_INSERT) == 0){
             $logger->debug("It is a insert command in table [ ". $table->getTableName() . " ]");
-            insertData($table, $params[$PARAM_DATA]);
+            insertData($table, $params[$PARAM_DATA], $resultArray);
          }
          $logger->trace("The request has been processed");
-         $resultArray['ResultCode'] = "OK 200";
-         
+        
       }
       print(json_encode($resultArray));
    } 
