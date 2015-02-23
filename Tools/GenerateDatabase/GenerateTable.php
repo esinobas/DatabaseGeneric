@@ -293,6 +293,7 @@
       $text .= "   \$MSG_ERROR = \"ErrorMsg\";\n";
       $text .= "   \$RESULT_CODE_SUCCESS = 200;\n";
       $text .= "   \$RESULT_CODE_INTERNAL_ERROR = 500;\n";
+      $text .= "   \$RETURN_LAST_ID = \"lastID\";";
       $text .= "\n";
       $text .= "\n";
       $text .= "   /****************** Functions *****************************/\n\n";
@@ -424,6 +425,7 @@
       $text .= "\n      if( \$newId != -1){\n";
       $text .= "           \$logger->trace(\"The insertion was exectuted successfully. \".\n";
       $text .= "                           \"The new Id is [ \$newId ]\");\n";
+      $text .= "           \$theResult[\$RETURN_LAST_ID]=\$theNewId;\n";
       $text .= "        }else{\n";
       $text .= "           \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
       $text .= "           \$theResult[\$MSG_ERROR] = \$theTable->getStrError();\n";
