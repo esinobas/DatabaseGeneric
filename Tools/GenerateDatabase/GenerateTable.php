@@ -371,17 +371,23 @@
          $text .="            }\n\n";
          
       }
-      $text .= "            \$logger->trace(\"Update the data in the database\");\n";
-      $text .= "            \$theTable->updateRow();\n";
       
-      $text .= "         }else{\n";
-      $text .= "            \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
-      $text .= "            \$theResult[\$MSG_ERROR] = \"The Key has not been found.\";\n";
-      $text .= "            \$logger->warn(\$theResult[\$MSG_ERROR]);\n";
+      
+      $text .= "            }else{\n";
+      $text .= "               \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
+      $text .= "               \$theResult[\$MSG_ERROR] = \"The Key has not been found.\";\n";
+      $text .= "               \$logger->warn(\$theResult[\$MSG_ERROR]);\n";
+      $text .= "               break;\n";
+      $text .= "            }\n";
       $text .= "         }\n";
-       $text .= "      }\n";
       
-      
+      $text .= "         \$logger->trace(\"Update the data in the database\");\n";
+      $text .= "         if ( ! \$theTable->updateRow()){\n";
+      $text .= "            \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
+      $text .= "            \$theResult[\$MSG_ERROR] = \$theTable->getStrError();\n";
+      $text .= "            \$logger->error(\"The update failed. Error [ \" . \$theResult[\$MSG_ERROR] . \" ]\");\n";
+      $text .= "         }\n";
+      $text .= "      \$logger->trace(\"Exit\");\n";
       $text .= "   }\n\n";
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
