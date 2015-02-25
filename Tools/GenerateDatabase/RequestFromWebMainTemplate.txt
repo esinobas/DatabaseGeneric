@@ -34,7 +34,7 @@
             $logger->debug("It is a insert command in table [ ". $table->getTableName() . " ]");
             insertData($table, $params[$PARAM_DATA], $resultArray);
          }
-         $logger->trace("The request has been processed");
+         $logger->trace("The request has been processed. Result [ " . json_encode($resultArray) ." ]");
         
       }
       print(json_encode($resultArray));

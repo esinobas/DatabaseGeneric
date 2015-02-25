@@ -215,7 +215,7 @@
       static public function updateTable(TableMapping $theTableMapping,
                                           array $theTableData){
          $logger = LoggerMgr::Instance()->getLogger(__CLASS__);
-         $result = false;
+         $result = true;
          $logger->trace("Enter");
          $logger->trace("Filter the modified rows. The table has [ ".
                   count($theTableData) . " ] rows before the filter" );

@@ -96,6 +96,7 @@
             $newData = $this->tableDataM[$key];
             $this->backupTableDataM[$key] = $newData;
             
+            
          }
          unset($this->tableDataM);
          $this->tableDataM =  $this->backupTableDataM;
@@ -210,9 +211,13 @@
        */
       public function update(){
          $this->loggerM->trace("Enter");
+         if ($this->backupTableDataM != null){
+         
+            $this->mergeTableData();
+         }
          $result = DatabaseMgr::updateTable($this->tableMappingM, $this->tableDataM);
          if ($result){
-            $this->mergeTableData();
+            //$this->mergeTableData();
             $this->strErrorM ="";
          }else{
             $this->strErrorM = DatabaseMgr::getDatabaseError();
@@ -229,9 +234,13 @@
        */
       public function updateRow(){
          $this->loggerM->trace("Enter");
+         if ($this->backupTableDataM != null){
+         
+            $this->mergeTableData();
+         }
          $result = DatabaseMgr::updateTable($this->tableMappingM, array(current($this->tableDataM)));
          if ($result){
-            $this->mergeTableData();
+            //$this->mergeTableData();
             $this->strErrorM ="";
          }else{
             $this->strErrorM = DatabaseMgr::getDatabaseError();
@@ -297,6 +306,11 @@
        */
       public function searchByColummn($theColumn, $theValue){
          $this->loggerM->trace("Enter");
+         
+         if ($this->backupTableDataM != null){
+            
+            $this->mergeTableData();
+         }
          
          $callbackSearchByColumn = function ($var) use ($theColumn, $theValue){
             $this->loggerM->trace("Enter");
