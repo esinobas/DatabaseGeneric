@@ -382,7 +382,7 @@
       $text .= "         }\n";
       
       $text .= "         \$logger->trace(\"Update the data in the database\");\n";
-      $text .= "         if ( ! \$theTable->updateRow()){\n";
+      $text .= "         if ( ! \$theTable->update()){\n";
       $text .= "            \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
       $text .= "            \$theResult[\$MSG_ERROR] = \$theTable->getStrError();\n";
       $text .= "            \$logger->error(\"The update failed. Error [ \" . \$theResult[\$MSG_ERROR] . \" ]\");\n";
