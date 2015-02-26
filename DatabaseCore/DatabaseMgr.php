@@ -228,7 +228,7 @@
                count($arrayModifiedRows) . " ] rows after the filter" );
          if (count($arrayModifiedRows) == 0){
             $logger->trace("Exit");
-            return;
+            return $result;
          }
          $database = self::getDatabase(false);
          if ( $database != null){
