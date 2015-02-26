@@ -230,8 +230,9 @@
             $text .= "         \$arrayData[self::".$column->name."ColumnC] = \$the".$column->name.";\n";
          }
       }
-      $text .= "         parent::insertData(\$arrayData);\n";
       $text .= "         \$this->loggerM->trace(\"Exit\");\n";
+      $text .= "\n";
+      $text .= "         return parent::insertData(\$arrayData);\n";
       $text .= "      }\n";
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
