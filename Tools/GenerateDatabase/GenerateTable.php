@@ -403,6 +403,7 @@
       $text .= "      global \$MSG_ERROR;\n";
       $text .= "      global \$RESULT_CODE_SUCCESS;\n";
       $text .= "      global \$RESULT_CODE_INTERNAL_ERROR;\n";
+      $text .= "      global \$RETURN_LAST_ID;\n";
       $text .= "      \$logger->trace(\"Enter\");\n";
       $text .= "      \$logger->trace(\"Insert data: [ \".json_encode(\$theData).\" ]\");\n";
       $text .= "      \$logger->trace(\"Into [ \" . \$theTable->getTableName() .\" ]\");\n";
@@ -432,7 +433,7 @@
       $text .= "\n      if( \$newId != -1){\n";
       $text .= "           \$logger->trace(\"The insertion was exectuted successfully. \".\n";
       $text .= "                           \"The new Id is [ \$newId ]\");\n";
-      $text .= "           \$theResult[\$RETURN_LAST_ID]=\$theNewId;\n";
+      $text .= "           \$theResult[\$RETURN_LAST_ID]=\$newId;\n";
       $text .= "        }else{\n";
       $text .= "           \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
       $text .= "           \$theResult[\$MSG_ERROR] = \$theTable->getStrError();\n";
