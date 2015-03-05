@@ -138,11 +138,13 @@
          
       }
       $logger->trace("Add the conditions");
-      $conditions = $thePhisicalDef->conditions;
-      foreach ($conditions as $condition){
-         $logger->trace("Add Condition [ $condition->condition ]");
+      $conditions = $thePhisicalDef->conditions->condition;
+      
+      
+      for ($idx = 0; $idx < count($conditions); $idx++){
+         $logger->trace("Add Condition [ ". $conditions[$idx]." ]");
          $text .= "\n";
-         $text .= "      \$this->tableMappingM->addCondition(\"$condition->condition\");\n";
+         $text .= "      \$this->tableMappingM->addCondition(\"". $conditions[$idx]. "\");\n";
       }
       $text .= "      \n";
       $text .= "      \$this->loggerM->trace(\"Exit\");\n";
