@@ -179,7 +179,12 @@
                <name>Level_Id</name>
                <logical>LevelId</logical>
                <type>integer</type>
-             </column>
+            </column>
+            <column>
+               <name>Public</name>
+               <logical>Public</logical>
+               <type>boolean</type>
+            </column>
          </columns>
          <key>Id</key>
       </table>

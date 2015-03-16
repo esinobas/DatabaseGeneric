@@ -14,6 +14,7 @@
       const stringC  =   1;
       const timestampC = 2;
       const floatC     = 3;
+      const booleanC    = 4;
       
    }
 ?>
