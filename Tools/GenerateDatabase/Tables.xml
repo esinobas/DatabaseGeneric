@@ -234,6 +234,10 @@
       <type>float</type>
    </column>
    <column>
+      <name>CursePublic</name>
+      <type>boolean</type>
+    </column>
+   <column>
       <name>CurseLevelId</name>
       <type>integer</type>
    </column>
@@ -278,6 +282,11 @@
                <logical>CurseLevelId</logical>
                <type>integer</type>
             </column>
+            <column>
+               <name>Public</name>
+               <logical>CursePublic</logical>
+               <type>boolean</type>
+             </column>
          </columns>
       </table>
       <table>
