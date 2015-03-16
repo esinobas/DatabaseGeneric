@@ -87,7 +87,7 @@
    </phisical_tables>
    
 </table_definition>
-!-- Mapping definitions --!
+<!-- Mapping definitions -->
 
 <table_definition>
    <name>TB_Curso</name>
@@ -97,7 +97,8 @@
    </column>
    <column>
       <name>Name</name>
-      <type>string</type></column>
+      <type>string</type>
+   </column>
    <column>
       <name>Description</name>
       <type>string</type>
@@ -121,6 +122,10 @@
    <column>
       <name>Level</name>
       <type>string</type>
+   </column>
+   <column>
+      <name>Public</name>
+      <type>boolean</type>
    </column>
    <key>
       <column>Id</column>
@@ -179,6 +184,135 @@
          <key>Id</key>
       </table>
       <conditions>
+         <condition>TB_Curso.Level_Id = TB_Level.Id</condition>
+      </conditions>
+   </phisical_tables>
+</table_definition>
+
+<!--  Table TB_Curse_Steps -->
+<table_definition>
+   <name>TB_Curse_Step</name>
+   <column>
+      <name>Id</name>
+      <type>integer</type>
+   </column>
+   <column>
+      <name>Title</name>
+      <type>string</type>
+   </column>
+   <column>
+      <name>Html</name>
+      <type>string</type>
+   </column>
+   <column>
+      <name>Curse_Id</name>
+      <type>integer</type>
+   </column>
+   <column>
+      <name>CurseName</name>
+      <type>string</type>
+   </column>
+   <column>
+      <name>CurseDescription</name>
+      <type>string</type>
+   </column>
+   <column>
+      <name>CurseImage</name>
+      <type>string</type>
+   </column>
+   <column>
+      <name>CurseDuration</name>
+      <type>integer</type>
+   </column>
+   <column>
+      <name>CursePrice</name>
+      <type>float</type>
+   </column>
+   <column>
+      <name>CurseLevelId</name>
+      <type>integer</type>
+   </column>
+   <column>
+      <name>CurseLevel</name>
+      <type>string</type>
+   </column>
+   <key>
+      <column>Id</column>
+   </key>
+   <phisical_tables>
+      <table>
+         <name>TB_Curso</name>
+         <columns>
+            <column>
+               <name>Name</name>
+               <logical>CurseName</logical>
+               <type>string</type>
+            </column>
+            <column>
+               <name>Description</name>
+               <logical>CurseDescription</logical>
+               <type>string</type>
+            </column>
+            <column>
+               <name>Image</name>
+               <logical>CurseImage</logical>
+               <type>string</type>
+            </column>
+            <column>
+               <name>Duration</name>
+               <logical>CurseDuration</logical>
+               <type>integer</type>
+            </column>
+            <column>
+               <name>Price</name>
+               <logical>CursePrice</logical>
+               <type>float</type>
+            </column>
+            <column>
+               <name>Level_Id</name>
+               <logical>CurseLevelId</logical>
+               <type>integer</type>
+            </column>
+         </columns>
+      </table>
+      <table>
+         <name>TB_Level</name>
+         <columns>
+            <column>
+               <name>Level</name>
+               <logical>CurseLevel</logical>
+               <type>string</type>
+            </column>
+         </columns>
+      </table>
+      <table>
+         <name>TB_Step</name>
+         <columns>
+            <column>
+               <name>Id</name>
+               <logical>Id</logical>
+               <type>integer</type>
+            </column>
+            <column>
+               <name>Title</name>
+               <logical>Title</logical>
+               <type>string</type>
+            </column>
+            <column>
+               <name>Html</name>
+               <logical>Html</logical>
+               <type>string</type>
+            </column>
+            <column>
+               <name>Curso_Id</name>
+               <logical>Curse_Id</logical>
+               <type>string</type>
+            </column>
+         </columns>
+         <key>Id</key>
+      </table>
+      <conditions>
+         <condition>TB_Curso.Id = TB_Step.Curso_Id</condition>
          <condition>TB_Curso.Level_Id = TB_Level.Id</condition>
       </conditions>
    </phisical_tables>

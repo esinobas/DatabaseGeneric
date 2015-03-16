@@ -74,7 +74,7 @@
        * 
        * @return A boolen value that indicates if the row or rows have been found
        */
-      public function searchByColummn($theColumn, $theValue);
+      public function searchByColumn($theColumn, $theValue);
       
       /**
        * Returns the number of rows that the table has.
