@@ -291,6 +291,7 @@
       $text .= "   \$PARAMS = \"paramsCommand\";\n";
       $text .= "   \$PARAM_TABLE = \"Table\";\n";
       $text .= "   \$PARAM_ROWS = \"rows\";\n";
+      $text .= "   \$PARAM_ROW = \"row\";\n";
       $text .= "   \$PARAM_DATA = \"data\";\n";
       $text .= "   \$COMMAND_INSERT = \"I\";\n";
       $text .= "   \$COMMAND_UPDATE = \"U\";\n";
