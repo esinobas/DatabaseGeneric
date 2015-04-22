@@ -295,6 +295,7 @@
       $text .= "   \$PARAM_DATA = \"data\";\n";
       $text .= "   \$COMMAND_INSERT = \"I\";\n";
       $text .= "   \$COMMAND_UPDATE = \"U\";\n";
+      $text .= "   \$COMMAND_DELETE = \"D\";\n";
       $text .= "   \$PARAM_KEY = \"key\";\n";
       $text .= "   \$RESULT_CODE = \"ResultCode\";\n";
       $text .= "   \$MSG_ERROR = \"ErrorMsg\";\n";
@@ -452,6 +453,48 @@
       $logger->trace("Exit");
    }
    
+   function writeRequestFromWebFunctionDelete($theFileHandler, $theTablesDefinition){
+      global $logger;
+      $logger->trace("Enter");
+      
+      $text = "   function delete(\$theTable, \$theData, &\$theResult){\n";
+      $text .= "      global \$logger;\n";
+      $text .= "      global \$RESULT_CODE;\n";
+      $text .= "      global \$MSG_ERROR;\n";
+      $text .= "      global \$RESULT_CODE_SUCCESS;\n";
+      $text .= "      global \$RESULT_CODE_INTERNAL_ERROR;\n";
+      $text .= "      global \$PARAM_KEY;\n";
+      $text .= "      \$logger->trace(\"Enter\");\n";
+      $text .= "      \$jsonKey = \$theData[\$PARAM_KEY];\n";
+      $text .= "      \$logger->trace(\"Delete from table \".\$theTable->getTableName().\n";
+      $text .= "                    \" with key [ \".json_encode(\$jsonKey).\" ]\");\n";
+      
+      $logger->trace("number of tables: " . count($theTablesDefinition));
+      foreach ($theTablesDefinition as $tableDefinition){
+         $text .="\n      if (strcmp(\$theTable->getTableName(),".
+               $tableDefinition->name."::".
+               $tableDefinition->name."TableC) == 0){\n";
+         $logger->trace("The table [ ". $tableDefinition->name .
+                        " ] has [ " . count($tableDefinition->key->column).
+                        " ] key colummns");
+         $text .= "         \$composedKey = array();\n";
+         foreach ($tableDefinition->key->column as $columnKey){
+            $logger->trace("For the table [ " . $tableDefinition->name .
+                           " ] getting column key [ \"$columnKey \" ]" );
+            $text.= "         \$composedKey[\"$columnKey\"] = \$jsonKey[\"$columnKey\"];\n";
+         }
+         $text .= "         \$logger->trace(\"Order table [ \".\$theTable->getTableName().\n";
+         $text .= "                  \" ] with key [ \" . json_encode(\$composedKey). \" ]\");\n";
+         $text .= "          \$theTable->searchByKey(\$composedKey);\n";
+         $text .= "          \$theTable->delete();\n";
+         $text .= "      }\n";
+      }
+      $text .= "      \$logger->trace(\"Exit\");\n";
+      $text .= "   }\n\n";
+      fwrite($theFileHandler, $text);
+      $logger->trace("Exit");
+   }
+   
    function writeRequestFromWebMain($theFileHandler){
       global $logger;
       $logger->trace("Enter");
@@ -526,6 +569,7 @@
    writeRequestFromWebFunctionGetTable($fileHandler, $definitions->table_definition);
    writeRequestFromWebFunctionUpdateData($fileHandler, $definitions->table_definition);
    writeRequestFromWebFunctionInsertData($fileHandler, $definitions->table_definition);
+   writeRequestFromWebFunctionDelete($fileHandler, $definitions->table_definition);
    writeRequestFromWebMain($fileHandler);
    fflush($fileHandler);
    $logger->debug("Close RequestFromWeb.php");

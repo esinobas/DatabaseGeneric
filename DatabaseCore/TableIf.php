@@ -91,5 +91,12 @@
        * @return A string with the error message
        */
       public function getStrError();
+      
+      /**
+       * Returns the table name
+       * 
+       * @return A string with the table name.
+       */
+      //public function getTableName();
    }
 ?>

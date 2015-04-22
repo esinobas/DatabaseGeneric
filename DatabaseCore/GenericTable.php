@@ -286,18 +286,39 @@
       public function searchByKey($theKey){
          
          $this->loggerM->trace("Enter");
-         $this->loggerM->trace("Search key [ $theKey ]");
+         if (!is_array($theKey)){
+            $this->loggerM->trace("Search key [ $theKey ]");
+         }else{
+            $this->loggerM->trace("Search key [ ".json_encode($theKey)." ]");
+         }
          
          $result = false;
-         $columnkey = $this->tableDefinitionM->getKeys()[0];
-         $this->loggerM->debug("Search in [ $columnkey ][ $theKey ]");
-         if ($this->searchByColumn($columnkey, $theKey)){
-            $this->loggerM->debug("The [ $theKey ] has been found in [ $columnkey ]");
-            $result = true;
-         }else{
-            $this->loggerM->debug("The [ $theKey ] has NOT been found in [ $columnkey ]");
-            
+         //$columnkey = $this->tableDefinitionM->getKeys()[0];
+         foreach ($this->tableDefinitionM->getKeys() as $columnKey){
+            if ( ! is_array($theKey)){
+               $this->loggerM->debug("Search in [ $columnKey ][ $theKey ]");
+               if ($this->searchByColumn($columnKey, $theKey)){
+                  $this->loggerM->debug("The [ $theKey ] has been found in [ $columnKey ]");
+                  $result = true;
+               }else{
+                  $this->loggerM->debug("The [ $theKey ] has NOT been found in [ $columnKey ]");
+                  $this->loggerM->trace("Exit");
+                  return false;
+               }
+            }else{
+               $this->loggerM->debug("Search in [ $columnKey ][ $theKey[$columnKey] ]");
+               if ($this->searchByColumn($columnKey, $theKey[$columnKey])){
+                  $this->loggerM->debug("The [ $theKey[$columnKey] ] has been found in [ $columnKey ]");
+                  $result = true;
+               }else{
+                  $this->loggerM->debug("The [ $theKey[$columnKey] ] has NOT been found in [ $columnKey ]");
+                  $this->loggerM->trace("Exit");
+                  return false;
+               }
+            }
          }
+         
+         
          $this->loggerM->trace("Exit");
          return $result;
       }
@@ -358,5 +379,13 @@
          $this->loggerM->trace("Exit");
          return $this->strErrorM;
       }
+      
+      /**
+       * (non-PHPdoc)
+       * @see TableIf::getTableName()
+       */
+      /*public function getTableName(){
+         return "";
+      }*/
    }
 ?>
