@@ -486,9 +486,14 @@
          $text .= "         \$logger->trace(\"Order table [ \".\$theTable->getTableName().\n";
          $text .= "                  \" ] with key [ \" . json_encode(\$composedKey). \" ]\");\n";
          $text .= "          \$theTable->searchByKey(\$composedKey);\n";
-         $text .= "          \$theTable->delete();\n";
          $text .= "      }\n";
       }
+      $text .= "      \$logger->trace(\"Delete data in the database\");\n";
+      $text .= "      if (! \$theTable->delete()){\n";
+      $text .= "         \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
+      $text .= "         \$theResult[\$MSG_ERROR] = \$theTable->getStrError();\n";
+      $text .= "         \$logger->error(\"The delete failed. Error [ \" . \$theResult[\$MSG_ERROR] . \" ]\");\n";
+      $text .= "      }\n";
       $text .= "      \$logger->trace(\"Exit\");\n";
       $text .= "   }\n\n";
       fwrite($theFileHandler, $text);
