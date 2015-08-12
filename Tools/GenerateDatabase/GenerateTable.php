@@ -19,8 +19,8 @@
       $text .= "         \$this->loggerM->trace(\"Enter / Exit\");\n";
       $text .= "         return self::".$theClassName."TableC;\n";
       $text .= "      }\n";
-      $text .= "   }";
-     
+      $text .= "   }\n";
+      $text .= "?>\n";
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
       
@@ -359,8 +359,8 @@
          $text .="            if (strcmp(\$theTable->getTableName(),".
                                       $tableDefinition->name."::".
                                       $tableDefinition->name."TableC) == 0){\n";
-         $logger->trace("number of colummns: " . count($tableDefinition->column));
-         foreach ($tableDefinition->column as $column){
+         $logger->trace("number of colummns: " . count($tableDefinition->columns->column));
+         foreach ($tableDefinition->columns->column as $column){
             if (strcmp($column->name, $tableDefinition->key->column) != 0){
                $text .= "               if (isset(\$row[". $tableDefinition->name."::". 
                                      $column->name . "ColumnC])){\n";
@@ -420,12 +420,12 @@
                $tableDefinition->name."::".
                $tableDefinition->name."TableC) == 0){\n";
          $logger->trace("The table [ ". $tableDefinition->name .
-                        " ] has [ " . count($tableDefinition->column).
+                        " ] has [ " . count($tableDefinition->columns->column).
                         " ] colummns.");
          $text .="\n         //Declare variables\n";
          $data = "";
          $logger->trace("Key: " . $tableDefinition->key->column);
-         foreach ($tableDefinition->column as $column){
+         foreach ($tableDefinition->columns->column as $column){
             $logger->trace("Column: " . $column->name);
             if (strcmp($tableDefinition->key->column, $column->name) != 0 ){
                $text .="         \$var".$column->name . " = \$theData[\"" .
@@ -544,17 +544,17 @@
       writeHeaderTemplate($fileHandler, 
                        $definitions->table_definition[$idx]->name);
       writeColumnsConstanDefinition($fileHandler,
-                       $definitions->table_definition[$idx]->column);
+                       $definitions->table_definition[$idx]->columns->column);
       writePhisicalConstants($fileHandler,
                        $definitions->table_definition[$idx]->phisical_tables);
       writeConstructor($fileHandler, 
                        $definitions->table_definition[$idx]->name,
-                       $definitions->table_definition[$idx]->column,
+                       $definitions->table_definition[$idx]->columns->column,
                        $definitions->table_definition[$idx]->key,
                         $definitions->table_definition[$idx]->phisical_tables);
-      writeMethodInsert($fileHandler, $definitions->table_definition[$idx]->column,
+      writeMethodInsert($fileHandler, $definitions->table_definition[$idx]->columns->column,
                        $definitions->table_definition[$idx]->key);
-      writeMethodsGetSet($fileHandler, $definitions->table_definition[$idx]->column,
+      writeMethodsGetSet($fileHandler, $definitions->table_definition[$idx]->columns->column,
                          $definitions->table_definition[$idx]->key);
       
       closeClassDefinition($fileHandler,  $definitions->table_definition[$idx]->name);
