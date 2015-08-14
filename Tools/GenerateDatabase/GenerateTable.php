@@ -476,7 +476,7 @@
                $tableDefinition->name."TableC) == 0){\n";
          $logger->trace("The table [ ". $tableDefinition->name .
                         " ] has [ " . count($tableDefinition->key->column).
-                        " ] key colummns");
+                        " ] key columns");
          $text .= "         \$composedKey = array();\n";
          foreach ($tableDefinition->key->column as $columnKey){
             $logger->trace("For the table [ " . $tableDefinition->name .

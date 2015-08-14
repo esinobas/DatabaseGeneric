@@ -4,7 +4,10 @@
     * 
     * In this class the logical structure table is defined.
     */
-   set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
+   
+   if ( ! strpos(get_include_path(), dirname(__FILE__))){ 
+      set_include_path( get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
+   }
    
    include_once dirname(__FILE__).'/DatabaseCore/TableDef.php';
    include_once dirname(__FILE__).'/DatabaseCore/ColumnDef.php';
