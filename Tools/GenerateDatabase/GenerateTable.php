@@ -255,7 +255,7 @@
       $text .= "    */\n\n";
       $text .= "   /****************** INCLUDES ******************************/\n";
       $text .= "   set_include_path( get_include_path() . PATH_SEPARATOR . \$_SERVER['DOCUMENT_ROOT'].\n";
-      $text .= "                      '/controlpanel/Cursos/php');\n";
+      $text .= "                      '/php/');\n";
       $text .= "\n";
       $text .= "   include_once 'LoggerMgr/LoggerMgr.php';\n";
       //$text .= "   include_once 'DatabaseCore/DatabaseMgr.php';\n";
@@ -287,21 +287,21 @@
       $text .= "\n";
       $text .= "   \$logger = null;\n";
       $text .= "\n";
-      $text .= "   \$COMMAND = \"command\";\n";
-      $text .= "   \$PARAMS = \"paramsCommand\";\n";
-      $text .= "   \$PARAM_TABLE = \"Table\";\n";
-      $text .= "   \$PARAM_ROWS = \"rows\";\n";
-      $text .= "   \$PARAM_ROW = \"row\";\n";
-      $text .= "   \$PARAM_DATA = \"data\";\n";
-      $text .= "   \$COMMAND_INSERT = \"I\";\n";
-      $text .= "   \$COMMAND_UPDATE = \"U\";\n";
-      $text .= "   \$COMMAND_DELETE = \"D\";\n";
-      $text .= "   \$PARAM_KEY = \"key\";\n";
-      $text .= "   \$RESULT_CODE = \"ResultCode\";\n";
-      $text .= "   \$MSG_ERROR = \"ErrorMsg\";\n";
-      $text .= "   \$RESULT_CODE_SUCCESS = 200;\n";
-      $text .= "   \$RESULT_CODE_INTERNAL_ERROR = 500;\n";
-      $text .= "   \$RETURN_LAST_ID = \"lastID\";";
+      $text .= "   define(COMMAND, \"command\");\n";
+      $text .= "   define(PARAMS, \"paramsCommand\");\n";
+      $text .= "   define(PARAM_TABL, \"Table\");\n";
+      $text .= "   define(PARAM_ROWS, \"rows\");\n";
+      $text .= "   define(PARAM_ROW, \"row\");\n";
+      $text .= "   define(PARAM_DATA, \"data\");\n";
+      $text .= "   define(COMMAND_INSERT, \"I\");\n";
+      $text .= "   define(COMMAND_UPDATE, \"U\");\n";
+      $text .= "   define(COMMAND_DELETE, \"D\");\n";
+      $text .= "   define(PARAM_KEY, \"key\");\n";
+      $text .= "   define(RESULT_CODE, \"ResultCode\");\n";
+      $text .= "   define(MSG_ERROR, \"ErrorMsg\");\n";
+      $text .= "   define(RESULT_CODE_SUCCESS, 200);\n";
+      $text .= "   define(RESULT_CODE_INTERNAL_ERROR, 500);\n";
+      $text .= "   define(RETURN_LAST_ID, \"lastID\");\n";
       $text .= "\n";
       $text .= "\n";
       $text .= "   /****************** Functions *****************************/\n\n";
@@ -340,16 +340,11 @@
       $logger->trace("Enter");
       $text = "   function updateData(\$theTable, \$theRows, &\$theResult){\n";
       $text .= "      global \$logger;\n";
-      $text .= "      global \$PARAM_KEY;\n\n";
-      $text .= "      global \$RESULT_CODE;\n";
-      $text .= "      global \$MSG_ERROR;\n";
-      $text .= "      global \$RESULT_CODE_SUCCESS;\n";
-      $text .= "      global \$RESULT_CODE_INTERNAL_ERROR;\n";
       $text .= "      \$logger->trace(\"Enter\");\n";
       $text .= "      \$logger->trace(\"Rows: [ \".json_encode(\$theRows).\" ]\");\n";
       $text .= "      \$logger->trace(\"Update data of [ \" . \$theTable->getTableName() .\" ]\");\n";
       $text .= "      foreach ( \$theRows as \$row){\n";
-      $text .= "         \$key = \$row[\$PARAM_KEY];\n";
+      $text .= "         \$key = \$row[PARAM_KEY];\n";
       $text .= "         \$logger->trace(\"Search by [ \$key ]\");\n";
       $text .= "         if ( \$theTable->searchByKey(\$key)){\n";
       $text .= "            \$logger->trace(\"The Key has been found.\");\n";
@@ -382,18 +377,18 @@
       
       
       $text .= "            }else{\n";
-      $text .= "               \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
-      $text .= "               \$theResult[\$MSG_ERROR] = \"The Key has not been found.\";\n";
-      $text .= "               \$logger->warn(\$theResult[\$MSG_ERROR]);\n";
+      $text .= "               \$theResult[RESULT_CODE] = RESULT_CODE_INTERNAL_ERROR;\n";
+      $text .= "               \$theResult[MSG_ERROR] = \"The Key has not been found.\";\n";
+      $text .= "               \$logger->warn(\$theResult[MSG_ERROR]);\n";
       $text .= "               break;\n";
       $text .= "            }\n";
       $text .= "         }\n";
       
       $text .= "         \$logger->trace(\"Update the data in the database\");\n";
       $text .= "         if ( ! \$theTable->update()){\n";
-      $text .= "            \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
-      $text .= "            \$theResult[\$MSG_ERROR] = \$theTable->getStrError();\n";
-      $text .= "            \$logger->error(\"The update failed. Error [ \" . \$theResult[\$MSG_ERROR] . \" ]\");\n";
+      $text .= "            \$theResult[RESULT_CODE] = RESULT_CODE_INTERNAL_ERROR;\n";
+      $text .= "            \$theResult[MSG_ERROR] = \$theTable->getStrError();\n";
+      $text .= "            \$logger->error(\"The update failed. Error [ \" . \$theResult[MSG_ERROR] . \" ]\");\n";
       $text .= "         }\n";
       $text .= "      \$logger->trace(\"Exit\");\n";
       $text .= "   }\n\n";
@@ -406,11 +401,6 @@
       $logger->trace("Enter");
       $text = "   function insertData(\$theTable, \$theData, &\$theResult){\n";
       $text .= "      global \$logger;\n";
-      $text .= "      global \$RESULT_CODE;\n";
-      $text .= "      global \$MSG_ERROR;\n";
-      $text .= "      global \$RESULT_CODE_SUCCESS;\n";
-      $text .= "      global \$RESULT_CODE_INTERNAL_ERROR;\n";
-      $text .= "      global \$RETURN_LAST_ID;\n";
       $text .= "      \$logger->trace(\"Enter\");\n";
       $text .= "      \$logger->trace(\"Insert data: [ \".json_encode(\$theData).\" ]\");\n";
       $text .= "      \$logger->trace(\"Into [ \" . \$theTable->getTableName() .\" ]\");\n";
@@ -440,11 +430,11 @@
       $text .= "\n      if( \$newId != -1){\n";
       $text .= "           \$logger->trace(\"The insertion was exectuted successfully. \".\n";
       $text .= "                           \"The new Id is [ \$newId ]\");\n";
-      $text .= "           \$theResult[\$RETURN_LAST_ID]=\$newId;\n";
+      $text .= "           \$theResult[RETURN_LAST_ID]=\$newId;\n";
       $text .= "        }else{\n";
-      $text .= "           \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
-      $text .= "           \$theResult[\$MSG_ERROR] = \$theTable->getStrError();\n";
-      $text .= "           \$logger->error(\"The insert failed. Error [ \" . \$theResult[\$MSG_ERROR] . \" ]\");\n";
+      $text .= "           \$theResult[RESULT_CODE] = RESULT_CODE_INTERNAL_ERROR;\n";
+      $text .= "           \$theResult[MSG_ERROR] = \$theTable->getStrError();\n";
+      $text .= "           \$logger->error(\"The insert failed. Error [ \" . \$theResult[MSG_ERROR] . \" ]\");\n";
       $text .= "        }\n";
        
       $text .= "      \$logger->trace(\"Exit\");\n";
@@ -459,13 +449,8 @@
       
       $text = "   function delete(\$theTable, \$theData, &\$theResult){\n";
       $text .= "      global \$logger;\n";
-      $text .= "      global \$RESULT_CODE;\n";
-      $text .= "      global \$MSG_ERROR;\n";
-      $text .= "      global \$RESULT_CODE_SUCCESS;\n";
-      $text .= "      global \$RESULT_CODE_INTERNAL_ERROR;\n";
-      $text .= "      global \$PARAM_KEY;\n";
       $text .= "      \$logger->trace(\"Enter\");\n";
-      $text .= "      \$jsonKey = \$theData[\$PARAM_KEY];\n";
+      $text .= "      \$jsonKey = \$theData[PARAM_KEY];\n";
       $text .= "      \$logger->trace(\"Delete from table \".\$theTable->getTableName().\n";
       $text .= "                    \" with key [ \".json_encode(\$jsonKey).\" ]\");\n";
       
@@ -490,9 +475,9 @@
       }
       $text .= "      \$logger->trace(\"Delete data in the database\");\n";
       $text .= "      if (! \$theTable->delete()){\n";
-      $text .= "         \$theResult[\$RESULT_CODE] = \$RESULT_CODE_INTERNAL_ERROR;\n";
-      $text .= "         \$theResult[\$MSG_ERROR] = \$theTable->getStrError();\n";
-      $text .= "         \$logger->error(\"The delete failed. Error [ \" . \$theResult[\$MSG_ERROR] . \" ]\");\n";
+      $text .= "         \$theResult[RESULT_CODE] = RESULT_CODE_INTERNAL_ERROR;\n";
+      $text .= "         \$theResult[MSG_ERROR] = \$theTable->getStrError();\n";
+      $text .= "         \$logger->error(\"The delete failed. Error [ \" . \$theResult[MSG_ERROR] . \" ]\");\n";
       $text .= "      }\n";
       $text .= "      \$logger->trace(\"Exit\");\n";
       $text .= "   }\n\n";

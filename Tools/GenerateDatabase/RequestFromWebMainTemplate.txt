@@ -8,35 +8,35 @@
 
       $logger->info("A request has been received from web");
       $resultArray = array();
-      if (!isset ($_POST[$COMMAND]) || ! isset ($_POST[$PARAMS])){
-         $resultArray[$RESULT_CODE] = $RESULT_CODE_INTERNAL_ERROR;
-         $resultArray[$MSG_ERROR] = "Unmatched format request. Absence of param $COMMAND or $PARAMS";
+      if (!isset ($_POST[COMMAND]) || ! isset ($_POST[PARAMS])){
+         $resultArray[RESULT_CODE] = RESULT_CODE_INTERNAL_ERROR;
+         $resultArray[MSG_ERROR] = "Unmatched format request. Absence of param COMMAND or PARAMS";
          $logger->error(json_encode($resultArray));
          //$logger->error("Unmatched format request. Absence of param $COMMAND or $PARAMS");
             //print("ERROR 500. Unmatched format request. Absence of param $COMMAND or $PARAMS");
          
       }else{
-         $resultArray[$RESULT_CODE] = $RESULT_CODE_SUCCESS;
-         $strCommand = $_POST[$COMMAND];
-         $strParams = $_POST[$PARAMS];
+         $resultArray[RESULT_CODE] = RESULT_CODE_SUCCESS;
+         $strCommand = $_POST[COMMAND];
+         $strParams = $_POST[PARAMS];
          $logger->trace("The command is [ $strCommand ] and the params are [ $strParams ]");
          $params = json_decode($strParams, true);
-         $table = getTable($params[$PARAM_TABLE]);
+         $table = getTable($params[PARAM_TABLE]);
          $logger->trace("The command parameter is [ $strCommand ]");
-         $logger->trace("Open the table [ $params[$PARAM_TABLE] ]");
+         $logger->trace("Open the table [ $params[PARAM_TABLE] ]");
          $table->open();
       
-         if (strcmp(strtoupper($strCommand), $COMMAND_UPDATE) == 0){
+         if (strcmp(strtoupper($strCommand), COMMAND_UPDATE) == 0){
             $logger->debug("It is a update command in table [ ". $table->getTableName() . " ]");
-            updateData($table, $params[$PARAM_ROWS],$resultArray);
+            updateData($table, $params[PARAM_ROWS],$resultArray);
          }
-         if (strcmp(strtoupper($strCommand), $COMMAND_INSERT) == 0){
+         if (strcmp(strtoupper($strCommand), COMMAND_INSERT) == 0){
             $logger->debug("It is a insert command in table [ ". $table->getTableName() . " ]");
-            insertData($table, $params[$PARAM_DATA], $resultArray);
+            insertData($table, $params[PARAM_DATA], $resultArray);
          }
-         if (strcmp(strtoupper($strCommand), $COMMAND_DELETE) == 0){
+         if (strcmp(strtoupper($strCommand), COMMAND_DELETE) == 0){
             $logger->debug("It is a delete command in table [ ". $table->getTableName() . " ]");
-            delete($table, $params[$PARAM_DATA], $resultArray);
+            delete($table, $params[PARAM_DATA], $resultArray);
          }
          $logger->trace("The request has been processed. Result [ " . json_encode($resultArray) ." ]");
         
