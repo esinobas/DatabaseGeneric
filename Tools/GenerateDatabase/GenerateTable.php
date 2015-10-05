@@ -97,11 +97,15 @@
                               self::".$theColumns[$idx]->name."ColumnC,"
                                        .getColumnType($theColumns[$idx]->type)."));\n";
       }
-      for ($idx= 0; $idx <count($theKey); $idx++){
+      
+      foreach ($theKey as $columnKey){
+      
+         
          $text .="\t\t\$this->tableDefinitionM->addKey(self::"
-               .$theKey[$idx]->column."ColumnC);\n";
+               .$columnKey."ColumnC);\n";
+         
       }
-   
+      
       /*** Write the phisical mapping ***/
       $text .= "   \n";
       $text .= "      \$this->tableMappingM = new TableMapping();\n";
@@ -535,7 +539,7 @@
       writeConstructor($fileHandler, 
                        $definitions->table_definition[$idx]->name,
                        $definitions->table_definition[$idx]->columns->column,
-                       $definitions->table_definition[$idx]->key,
+                       $definitions->table_definition[$idx]->key->column,
                         $definitions->table_definition[$idx]->phisical_tables);
       writeMethodInsert($fileHandler, $definitions->table_definition[$idx]->columns->column,
                        $definitions->table_definition[$idx]->key);
