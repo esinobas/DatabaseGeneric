@@ -470,7 +470,7 @@
          foreach ($tableDefinition->key->column as $columnKey){
             $logger->trace("For the table [ " . $tableDefinition->name .
                            " ] getting column key [ \"$columnKey \" ]" );
-            $text.= "         \$composedKey[\"$columnKey\"] = \$jsonKey[\"$columnKey\"];\n";
+            $text.= "         \$composedKey[\"$columnKey\"] = json_encode(\$jsonKey);\n";
          }
          $text .= "         \$logger->trace(\"Order table [ \".\$theTable->getTableName().\n";
          $text .= "                  \" ] with key [ \" . json_encode(\$composedKey). \" ]\");\n";
