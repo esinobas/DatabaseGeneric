@@ -293,7 +293,7 @@
       $text .= "\n";
       $text .= "   define(COMMAND, \"command\");\n";
       $text .= "   define(PARAMS, \"paramsCommand\");\n";
-      $text .= "   define(PARAM_TABL, \"Table\");\n";
+      $text .= "   define(PARAM_TABLE, \"Table\");\n";
       $text .= "   define(PARAM_ROWS, \"rows\");\n";
       $text .= "   define(PARAM_ROW, \"row\");\n";
       $text .= "   define(PARAM_DATA, \"data\");\n";
