@@ -76,6 +76,9 @@
       if (strtoupper($theType) == "BOOLEAN"){
          return "ColumnType::booleanC";
       }
+      if (strtoupper($theType) == "TIMESTAMP"){
+         return "ColumnType::timestampC";
+      }
    }
    
    function writeConstructor($theFileHandler, $theClassName, $theColumns, $theKey,
