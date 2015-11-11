@@ -28,6 +28,11 @@
        */
       private $conditionsM = array();
       
+      /**
+       * Structure where is saved the query order
+       */
+      private $orderByM = array();
+      
       /*** To be used in a futher ***/
       private $pathDatabaseConfigM = "";
       
@@ -158,6 +163,26 @@
          
          $this->loggerM->trace("Enter/Exit");
          return $this->conditionsM;
+      }
+      
+      /**
+       * Add the order by search in the table
+       * 
+       * @param theOrderBy The clausule order by
+       */
+      public function addOrderBy($theOrderBy){
+         $this->loggerM->trace("Enter/Exit");
+         $this->orderByM = $theOrderBy;
+      }
+      
+      
+      /**
+       * Returns the clausule order by
+       * @return Array with the order
+       */
+      public function getOrderBy(){
+         $this->loggerM->trace("Enter/Exit");
+         return $this->orderByM;
       }
    }
 ?>

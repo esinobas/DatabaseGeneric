@@ -147,12 +147,24 @@
       $logger->trace("Add the conditions");
       $conditions = $thePhisicalDef->conditions->condition;
       
-      
       for ($idx = 0; $idx < count($conditions); $idx++){
          $logger->trace("Add Condition [ ". $conditions[$idx]." ]");
          $text .= "\n";
          $text .= "      \$this->tableMappingM->addCondition(\"". $conditions[$idx]. "\");\n";
       }
+      $text .= "      \n";
+      
+      $logger->trace("Add the order by clausule if it exists");
+      foreach ($thePhisicalDef->orderBy as $orderBy){
+         $logger->trace("Add clausule order by[ ".json_encode($orderBy). " ]");
+         $text .= "      \$this->tableMappingM->addOrderBy(array(\"column\"=>".
+                     "\"".$orderBy->column ."\"";
+         if ($orderBy->type != null){
+            $text .= ", \"type\"=>\"".$orderBy->type."\"";
+         }
+         $text .= "));\n";
+      }
+      
       $text .= "      \n";
       $text .= "      \$this->loggerM->trace(\"Exit\");\n";
       $text .= "\t}\n";

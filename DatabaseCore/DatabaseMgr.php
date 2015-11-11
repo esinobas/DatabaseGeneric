@@ -17,6 +17,10 @@
       
       const modifiedRowC ="ColumnModifiedRow";
       
+      const ORDER_BY_COLUMN_C = 'column';
+      
+      const ORDER_BY_TYPE_C = "type";
+      
       static private $databaseM = null;
       
       /**
@@ -100,6 +104,17 @@
                $sqlSelect .= " where " . $condition;
             }else{
                $sqlSelect .= " and " . $condition;
+            }
+         }
+         $logger->trace("Get clausule order by from the table mapping. There is " .
+               (count($theTableMapping->getOrderBy()) == 0 ? "not":"") . 
+               " clausule order by");
+         if (count($theTableMapping->getOrderBy()) > 0){
+            $sqlSelect .= " order by " . $theTableMapping->getOrderBy()[self::ORDER_BY_COLUMN_C];
+            if ($theTableMapping->getOrderBy()[self::ORDER_BY_TYPE_C] == null){
+               $sqlSelect .= " ASC";
+            }else{
+               $sqlSelect .= " " . $theTableMapping->getOrderBy()[self::ORDER_BY_TYPE_C];
             }
          }
          $logger->debug($sqlSelect);
