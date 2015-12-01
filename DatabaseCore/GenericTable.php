@@ -381,6 +381,24 @@
       }
       
       /**
+       * Skips to the a row.
+       * @param integer $theNumRows
+       */
+      public function skip($theNumRows){
+         
+         if ($theNumRows <= $this->getCardinality()){
+            $this->loggerM->warn("The skipped [ $theNumRows ] is greater then or equal the tables rows [ " .
+                        $this->getCardinality() . " ]");
+         }
+         if ($theNumRows == 0){
+            $this->loggerM->warn("The skipped num rows is 0");
+         }
+         if ($theNumRows > 0 && $theNumRows < $this->getCardinality()){
+            $this->rowIdxM + $theNumRows - 1;
+         }
+      }
+      
+      /**
        * (non-PHPdoc)
        * @see TableIf::getTableName()
        */

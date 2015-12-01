@@ -38,6 +38,10 @@
             $logger->debug("It is a delete command in table [ ". $table->getTableName() . " ]");
             delete($table, $params[PARAM_DATA], $resultArray);
          }
+         if (strcmp(strtoupper($strCommand), COMMAND_SELECT) == 0){
+            $logger->debug("It is a select command in table [ " . $table->getTableName() . " ]");
+            selectData($table, $params[PARAM_DATA], $resultArray);
+         }
          $logger->trace("The request has been processed. Result [ " . json_encode($resultArray) ." ]");
         
       }

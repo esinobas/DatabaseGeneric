@@ -315,7 +315,13 @@
       $text .= "   define(COMMAND_INSERT, \"I\");\n";
       $text .= "   define(COMMAND_UPDATE, \"U\");\n";
       $text .= "   define(COMMAND_DELETE, \"D\");\n";
+      $text .= "   define(COMMAND_SELECT, \"S\");\n";
       $text .= "   define(PARAM_KEY, \"key\");\n";
+      $text .= "   define(PARAM_SKIP_ROWS, \"skipRows\");\n";
+      $text .= "   define(PARAM_NUM_ROWS, \"numRows\");\n";
+      $text .= "   define(PARAM_SEARCH_BY, \"searchBy\");\n";
+      $text .= "   define(PARAM_SEARCH_COLUMN, \"searchColumn\");\n";
+      $text .= "   define(PARAM_SEARCH_VALUE, \"searchValue\");\n";
       $text .= "   define(RESULT_CODE, \"ResultCode\");\n";
       $text .= "   define(MSG_ERROR, \"ErrorMsg\");\n";
       $text .= "   define(RESULT_CODE_SUCCESS, 200);\n";
@@ -412,6 +418,76 @@
       $text .= "      \$logger->trace(\"Exit\");\n";
       $text .= "   }\n\n";
       fwrite($theFileHandler, $text);
+      $logger->trace("Exit");
+   }
+   
+   function writeRequestFromWebSelect($theFileHandler, $theTablesDefinition){
+      global $logger;
+      
+      $logger->trace("Enter");
+      $text = "   function selectData(\$theTable, \$theData, &\$theResult){\n";
+      $text .= "      global \$logger;\n";
+      $text .= "      \$logger->trace(\"Enter\");\n";
+      $text .= "      \$logger->trace(\"Select data from  [ \" . \$theTable->getTableName() .\" ]\");\n";
+      $text .= "      \$logger->trace(\"with params: [ \".json_encode(\$theData).\" ]\");\n";
+      $text .= "      if (isset(\$theData[PARAM_SEARCH_BY])){\n";
+      $text .= "         \$logger->trace(\"Search by column [ \".
+                                  \$theData[PARAM_SEARCH_BY][PARAM_SEARCH_COLUMN] .
+                                  \" ] value [ \" .
+                                  \$theData[PARAM_SEARCH_BY][PARAM_SEARCH_VALUE] . 
+                                   \" ]\");\n";
+      
+      $text .= "         if (! \$theTable->searchByColumn(\$theData[PARAM_SEARCH_BY][PARAM_SEARCH_COLUMN],
+                                     \$theData[PARAM_SEARCH_BY][PARAM_SEARCH_VALUE])){\n";
+      $text .= "            \$logger->trace(\"The search has not had success\");\n";
+      $text .= "            return;\n";
+      $text .= "         }\n";
+      $text .= "      }\n";
+      $text .= "      \$numRows = 0;\n";
+      $text .= "      \n";
+      $text .= "      \$skipRows = 0;\n";
+      $text .= "      if (isset(\$theData[PARAM_SKIP_ROWS])){\n";
+      $text .= "         \$skipRows = \$theData[PARAM_SKIP_ROWS];\n";
+      $text .= "      }\n";
+      $text .= "      if (isset(\$theData[PARAM_SKIP_ROWS])){\n";
+      $text .= "         \$numRows = \$theData[PARAM_NUM_ROWS];\n";
+      $text .= "      }\n";
+      $text .= "      if (\$numRows == 0){\n";
+      $text .= "         \$numRows = \$theTable->getCardinality() - \$skipRows;\n";
+      $text .= "      }\n";
+      $text .= "      \$theTable->skip(\$skipRows);\n";
+      $text .= "\n";
+      $text .= "      \$idx = 0;\n";
+      $text .= "      \$theResult[PARAM_DATA] = array();\n";
+      $text .= "      while (\$theTable->next() && \$idx < \$numRows){\n";
+      $text .= "         \$rowData = array();\n";
+      $logger->trace("number of tables: " . count($theTablesDefinition));
+      foreach ($theTablesDefinition as $tableDefinition){
+         
+         $text .="\n         if (strcmp(\$theTable->getTableName(),".
+               $tableDefinition->name."::".
+               $tableDefinition->name."TableC) == 0){\n";
+         $logger->trace("The table [ ". $tableDefinition->name .
+               " ] has [ " . count($tableDefinition->columns->column).
+               " ] colummns.");
+         $text .="\n";
+         foreach ($tableDefinition->columns->column as $column){
+            $logger->trace("Get value from column [ " . $column->name .  " ]");
+            
+            $text .= "             \$rowData['" . $column->name . "'] = \$theTable->get" . 
+                   $column->name . "();\n";
+         }
+         $text .= "         }\n";
+         
+      }
+      $text .= "         \$logger->trace(\"Add row [ \$idx] [json_encode(\$rowData) ]\");\n";
+      $text .= "         \$theResult[PARAM_DATA][strval(\$idx)] = \$rowData;\n";
+      $text .= "         \$idx++;\n";
+      $text .= "      }\n";
+      $text .= "      \$logger->trace(\"Exit\");\n";
+      $text .= "   }\n";
+      fwrite($theFileHandler, $text);
+      
       $logger->trace("Exit");
    }
    
@@ -579,6 +655,7 @@
    writeRequestFromWebFunctionUpdateData($fileHandler, $definitions->table_definition);
    writeRequestFromWebFunctionInsertData($fileHandler, $definitions->table_definition);
    writeRequestFromWebFunctionDelete($fileHandler, $definitions->table_definition);
+   writeRequestFromWebSelect($fileHandler, $definitions->table_definition);
    writeRequestFromWebMain($fileHandler);
    fflush($fileHandler);
    $logger->debug("Close RequestFromWeb.php");
