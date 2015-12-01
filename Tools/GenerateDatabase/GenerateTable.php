@@ -449,7 +449,7 @@
       $text .= "      if (isset(\$theData[PARAM_SKIP_ROWS])){\n";
       $text .= "         \$skipRows = \$theData[PARAM_SKIP_ROWS];\n";
       $text .= "      }\n";
-      $text .= "      if (isset(\$theData[PARAM_SKIP_ROWS])){\n";
+      $text .= "      if (isset(\$theData[PARAM_NUM_ROWS])){\n";
       $text .= "         \$numRows = \$theData[PARAM_NUM_ROWS];\n";
       $text .= "      }\n";
       $text .= "      if (\$numRows == 0){\n";
@@ -480,7 +480,7 @@
          $text .= "         }\n";
          
       }
-      $text .= "         \$logger->trace(\"Add row [ \$idx] [json_encode(\$rowData) ]\");\n";
+      $text .= "         \$logger->trace(\"Add row [ \$idx ] [ \" . json_encode(\$rowData) .\" ]\");\n";
       $text .= "         \$theResult[PARAM_DATA][strval(\$idx)] = \$rowData;\n";
       $text .= "         \$idx++;\n";
       $text .= "      }\n";

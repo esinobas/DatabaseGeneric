@@ -386,7 +386,7 @@
        */
       public function skip($theNumRows){
          
-         if ($theNumRows <= $this->getCardinality()){
+         if ($theNumRows >= $this->getCardinality()){
             $this->loggerM->warn("The skipped [ $theNumRows ] is greater then or equal the tables rows [ " .
                         $this->getCardinality() . " ]");
          }
@@ -394,7 +394,9 @@
             $this->loggerM->warn("The skipped num rows is 0");
          }
          if ($theNumRows > 0 && $theNumRows < $this->getCardinality()){
-            $this->rowIdxM + $theNumRows - 1;
+            for ($i = 0;  $i < $theNumRows; $i++){
+               $this->next();
+            }
          }
       }
       
