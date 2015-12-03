@@ -327,6 +327,7 @@
       $text .= "   define(RESULT_CODE_SUCCESS, 200);\n";
       $text .= "   define(RESULT_CODE_INTERNAL_ERROR, 500);\n";
       $text .= "   define(RETURN_LAST_ID, \"lastID\");\n";
+      $text .= "   define(ADD_TO_CALLBACK, \"addToCallback\");\n";
       $text .= "\n";
       $text .= "\n";
       $text .= "   /****************** Functions *****************************/\n\n";

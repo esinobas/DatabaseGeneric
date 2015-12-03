@@ -54,6 +54,9 @@
             $logger->debug("It is a select command in table [ " . $table->getTableName() . " ]");
             selectData($table, $params[PARAM_DATA], $resultArray);
          }
+         if (isset($params[PARAM_DATA][ADD_TO_CALLBACK])){
+            $resultArray[ADD_TO_CALLBACK] = $params[PARAM_DATA][ADD_TO_CALLBACK];
+         }
          $logger->trace("The request has been processed. Result [ " . json_encode($resultArray) ." ]");
         
       }
