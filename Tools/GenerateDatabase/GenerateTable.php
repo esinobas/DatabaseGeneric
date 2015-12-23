@@ -276,6 +276,7 @@
       $text .= "   set_include_path( get_include_path() . PATH_SEPARATOR . \$_SERVER['DOCUMENT_ROOT'].\n";
       $text .= "                      '/php/');\n";
       $text .= "\n";
+      $text .= "   require_once 'Database/RequestFromWebConstants.php';\n";
       $text .= "   include_once 'LoggerMgr/LoggerMgr.php';\n";
       //$text .= "   include_once 'DatabaseCore/DatabaseMgr.php';\n";
       fwrite($theFileHandler, $text);
@@ -294,18 +295,14 @@
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
    }
-   
-   function writeRequestFromWebConstants($theFileHandler){
+   function writeRequestFromWebConstantFile($outDir){
       global $logger;
       $logger->trace("Enter");
-      $text = "\n";
-      $text .= "   /*** Definition of the global variables and constants ***/\n";
+      $fileHandler = fopen($outDir."RequestFromWebConstants.php", "w");
+      $text = "<?php\n";
       $text .= "   /**\n";
-      $text .= "    * Object for write the log in a file\n";
-      $text .= "    */\n";
-      $text .= "\n";
-      $text .= "   \$logger = null;\n";
-      $text .= "\n";
+      $text .= "    * File where are defined the constas used in RequestFromWeb\n";
+      $text .= "    */\n\n";
       $text .= "   define(COMMAND, \"command\");\n";
       $text .= "   define(PARAMS, \"paramsCommand\");\n";
       $text .= "   define(PARAM_TABLE, \"Table\");\n";
@@ -329,6 +326,46 @@
       $text .= "   define(RETURN_LAST_ID, \"lastID\");\n";
       $text .= "   define(ADD_TO_CALLBACK, \"addToCallback\");\n";
       $text .= "\n";
+      $text .= "?>";
+      fwrite($fileHandler, $text);
+      fflush($fileHandler);
+      fclose($fileHandler);
+      $logger->trace("Exit");
+   }
+   function writeRequestFromWebConstants($theFileHandler){
+      global $logger;
+      $logger->trace("Enter");
+      $text = "\n";
+      $text .= "   /*** Definition of the global variables and constants ***/\n";
+      $text .= "   /**\n";
+      $text .= "    * Object for write the log in a file\n";
+      $text .= "    */\n";
+      $text .= "\n";
+      $text .= "   \$logger = null;\n";
+      $text .= "\n";
+     /* $text .= "   define(COMMAND, \"command\");\n";
+      $text .= "   define(PARAMS, \"paramsCommand\");\n";
+      $text .= "   define(PARAM_TABLE, \"Table\");\n";
+      $text .= "   define(PARAM_ROWS, \"rows\");\n";
+      $text .= "   define(PARAM_ROW, \"row\");\n";
+      $text .= "   define(PARAM_DATA, \"data\");\n";
+      $text .= "   define(COMMAND_INSERT, \"I\");\n";
+      $text .= "   define(COMMAND_UPDATE, \"U\");\n";
+      $text .= "   define(COMMAND_DELETE, \"D\");\n";
+      $text .= "   define(COMMAND_SELECT, \"S\");\n";
+      $text .= "   define(PARAM_KEY, \"key\");\n";
+      $text .= "   define(PARAM_SKIP_ROWS, \"skipRows\");\n";
+      $text .= "   define(PARAM_NUM_ROWS, \"numRows\");\n";
+      $text .= "   define(PARAM_SEARCH_BY, \"searchBy\");\n";
+      $text .= "   define(PARAM_SEARCH_COLUMN, \"searchColumn\");\n";
+      $text .= "   define(PARAM_SEARCH_VALUE, \"searchValue\");\n";
+      $text .= "   define(RESULT_CODE, \"ResultCode\");\n";
+      $text .= "   define(MSG_ERROR, \"ErrorMsg\");\n";
+      $text .= "   define(RESULT_CODE_SUCCESS, 200);\n";
+      $text .= "   define(RESULT_CODE_INTERNAL_ERROR, 500);\n";
+      $text .= "   define(RETURN_LAST_ID, \"lastID\");\n";
+      $text .= "   define(ADD_TO_CALLBACK, \"addToCallback\");\n";
+      */$text .= "\n";
       $text .= "\n";
       $text .= "   /****************** Functions *****************************/\n\n";
       
@@ -659,6 +696,7 @@
    writeRequestFromWebSelect($fileHandler, $definitions->table_definition);
    writeRequestFromWebMain($fileHandler);
    fflush($fileHandler);
+   writeRequestFromWebConstantFile($outDir);
    $logger->debug("Close RequestFromWeb.php");
    print("... end\n");
 ?>
