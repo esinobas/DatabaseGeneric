@@ -273,11 +273,11 @@
       $text .= "    * in functions\n";
       $text .= "    */\n\n";
       $text .= "   /****************** INCLUDES ******************************/\n";
-      $text .= "   set_include_path( get_include_path() . PATH_SEPARATOR . \$_SERVER['DOCUMENT_ROOT'].\n";
-      $text .= "                      '/php/');\n";
+      $text .= "   set_include_path( get_include_path() . PATH_SEPARATOR . \$_SERVER['DOCUMENT_ROOT']);";
+      //$text .= "                      '/php/');\n";
       $text .= "\n";
-      $text .= "   require_once 'Database/RequestFromWebConstants.php';\n";
-      $text .= "   include_once 'LoggerMgr/LoggerMgr.php';\n";
+      $text .= "   require_once 'php/Database/Tables/RequestFromWebConstants.php';\n";
+      $text .= "   include_once 'php/LoggerMgr/LoggerMgr.php';\n";
       //$text .= "   include_once 'DatabaseCore/DatabaseMgr.php';\n";
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
@@ -290,7 +290,7 @@
       
       foreach ($theTablesDefinition as $tableDefinition){
      
-         $text .= "   include_once 'Database/".$tableDefinition->name.".php';\n";
+         $text .= "   include_once 'php/Database/Tables/".$tableDefinition->name.".php';\n";
       }
       fwrite($theFileHandler, $text);
       $logger->trace("Exit");
